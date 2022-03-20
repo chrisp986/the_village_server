@@ -12,19 +12,13 @@ func routes(r *gin.Engine) {
 	v1 := r.Group("/v1")
 	{
 		v1.GET("/players", getPlayers)
-
+		v1.GET("/player", getPlayer)
+		v1.GET("/active_players", getActivePlayers)
 		v1.GET("/", func(c *gin.Context) {
 			time.Sleep(2 * time.Second)
 			c.String(http.StatusOK, "Welcome Gin Server")
 		})
+		v1.POST("/players", postPlayers)
+		v1.POST("/calc_new_res", postCalculateNewResources)
 	}
-}
-
-var players = []Player{
-	{PlayerID: "1", PlayerName: "John Doe", PlayerScore: 100, Active: true},
-	{PlayerID: "2", PlayerName: "Jane Doe", PlayerScore: 200, Active: true},
-}
-
-func getPlayers(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, players)
 }

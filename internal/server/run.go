@@ -15,6 +15,7 @@ import (
 
 func Run() {
 	router := gin.Default()
+	router.Use(gin.Recovery())
 
 	routes(router)
 
