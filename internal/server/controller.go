@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,9 +33,29 @@ func getPlayers(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, players)
 }
 
-func getPlayer(c *gin.Context) {}
+func getPlayer(c *gin.Context) {
 
-func getActivePlayers(c *gin.Context) {}
+	playerID := c.Param("player_id")
+	pID, err := strconv.Atoi(playerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var player Player
+	for _, p := range players {
+		if p.PlayerID == int32(pID) {
+			player = p
+		}
+	}
+
+	if player.PlayerID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No player found!"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, player)
+}
 
 func postPlayers(c *gin.Context) {
 	var newPlayer Player
