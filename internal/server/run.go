@@ -20,8 +20,10 @@ func Run() {
 	routes(router)
 
 	srv := &http.Server{
-		Addr:    ":8001",
-		Handler: router,
+		Addr:         ":8001",
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	// Initializing the server in a goroutine so that

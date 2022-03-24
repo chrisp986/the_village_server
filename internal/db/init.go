@@ -12,7 +12,7 @@ type App struct {
 
 const db_file string = "tv_server.db"
 
-const create string = `
+const createTable string = `
   CREATE TABLE IF NOT EXISTS players (
   player_id INTEGER NOT NULL PRIMARY KEY,
   player_name TEXT NOT NULL,
@@ -27,7 +27,7 @@ func InitDB() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	if _, err := db.Exec(create); err != nil {
+	if _, err := db.Exec(createTable); err != nil {
 		return nil, err
 	}
 	return &App{

@@ -9,6 +9,7 @@ import (
 
 func main() {
 	fmt.Println("Starting the village server v0.1")
+
 	db.InitDB()
 
 	server.Run()
