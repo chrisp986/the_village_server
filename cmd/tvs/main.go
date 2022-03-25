@@ -10,7 +10,11 @@ import (
 func main() {
 	fmt.Println("Starting the village server v0.1")
 
-	db.InitDB()
+	err := db.InitDB()
+	if err != nil {
+		fmt.Println("Error initializing database:", err)
+		return
+	}
 
 	server.Run()
 
