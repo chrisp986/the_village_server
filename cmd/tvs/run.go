@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Run() {
+func runServer() {
 	router := gin.Default()
 	router.Use(gin.Recovery())
 
@@ -22,8 +22,9 @@ func Run() {
 	srv := &http.Server{
 		Addr:         ":8001",
 		Handler:      router,
-		ReadTimeout:  5 * time.Second,
+		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
 	}
 
 	// Initializing the server in a goroutine so that

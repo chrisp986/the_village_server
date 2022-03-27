@@ -1,4 +1,4 @@
-package server
+package models
 
 type Player struct {
 	PlayerID    int32  `json:"player_id"`

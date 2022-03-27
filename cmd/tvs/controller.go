@@ -1,13 +1,14 @@
-package server
+package main
 
 import (
 	"net/http"
 	"strconv"
 
+	"github.com/chrisp986/the_village_server/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
-var players = []Player{
+var players = []models.Player{
 	{
 		PlayerID:    1,
 		PlayerName:  "player1",
@@ -42,7 +43,7 @@ func getPlayer(c *gin.Context) {
 		return
 	}
 
-	var player Player
+	var player models.Player
 	for _, p := range players {
 		if p.PlayerID == int32(pID) {
 			player = p
@@ -58,7 +59,7 @@ func getPlayer(c *gin.Context) {
 }
 
 func postPlayers(c *gin.Context) {
-	var newPlayer Player
+	var newPlayer models.Player
 
 	// Call BindJSON to bind the received JSON to
 	// newAlbum.
@@ -74,14 +75,14 @@ func postPlayers(c *gin.Context) {
 
 func postCalculateNewResources(c *gin.Context) {
 
-	var numProductions Production
+	var numProductions models.Production
 
 	if err := c.BindJSON(&numProductions); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	newResources := Resource{
+	newResources := models.Resource{
 		Food:   numProductions.HunterHut * 2,
 		Wood:   numProductions.WoodcutterHut * 2,
 		Stone:  numProductions.Quarry * 2,

@@ -1,4 +1,4 @@
-package db
+package main
 
 import (
 	"database/sql"
@@ -6,10 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type App struct {
-	DB *sqlx.DB
-}
 
 const db_file string = "tv_server.db"
 
@@ -36,7 +32,7 @@ func InitDB() error {
 	return nil
 }
 
-func ConnectDB() (*App, error) {
+func ConnectDB() (*sqlx.DB, error) {
 	db, err := sqlx.Connect("sqlite3", db_file)
 	if err != nil {
 		return nil, err
@@ -48,9 +44,5 @@ func ConnectDB() (*App, error) {
 	if _, err := db.Exec(createTable); err != nil {
 		return nil, err
 	}
-	return &App{
-		DB: db,
-	}, nil
+	return db, nil
 }
-
-func GetDB()
