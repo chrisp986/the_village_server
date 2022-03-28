@@ -8,7 +8,7 @@ import (
 	"github.com/chrisp986/the_village_server/internal/models"
 )
 
-type app struct {
+type application struct {
 	players interface {
 		Insert(models.Player) (int, error)
 	}
@@ -17,19 +17,19 @@ type app struct {
 func main() {
 	fmt.Println("Starting the village server v0.1")
 
-	err := InitDB()
+	err := initDB()
 	if err != nil {
 		fmt.Println("Error initializing database:", err)
 		return
 	}
 
-	db, err := ConnectDB()
+	db, err := connectDB()
 	if err != nil {
 		log.Fatalln("Error connecting to database:", err)
 	}
 
 	fmt.Println("Connected to database")
-	_ = &app{players: &database.PlayerModel{DB: db}}
+	app := &application{players: &database.PlayerModel{DB: db}}
 
 	// var newPlayer = server.Player{
 	// 	PlayerID:    6,
@@ -41,6 +41,6 @@ func main() {
 
 	// app.players.Insert(newPlayer)
 
-	runServer()
+	app.runServer()
 
 }

@@ -58,7 +58,7 @@ func getPlayer(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, player)
 }
 
-func postPlayers(c *gin.Context) {
+func (a *application) postPlayers(c *gin.Context) {
 	var newPlayer models.Player
 
 	// Call BindJSON to bind the received JSON to
@@ -69,7 +69,10 @@ func postPlayers(c *gin.Context) {
 	}
 
 	// Add the new album to the slice.
-	players = append(players, newPlayer)
+	// players = append(players, newPlayer)
+
+	a.players.Insert(newPlayer)
+
 	c.IndentedJSON(http.StatusCreated, newPlayer)
 }
 

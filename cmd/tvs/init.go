@@ -19,7 +19,7 @@ const createTable string = `
   UNIQUE(player_name)
   );`
 
-func InitDB() error {
+func initDB() error {
 	db, err := sql.Open("sqlite3", db_file)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func InitDB() error {
 	return nil
 }
 
-func ConnectDB() (*sqlx.DB, error) {
+func connectDB() (*sqlx.DB, error) {
 	db, err := sqlx.Connect("sqlite3", db_file)
 	if err != nil {
 		return nil, err

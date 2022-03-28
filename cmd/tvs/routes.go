@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func routes(r *gin.Engine) {
+func (a *application) routes(r *gin.Engine) {
 
 	v1 := r.Group("/v1")
 	{
@@ -18,7 +18,7 @@ func routes(r *gin.Engine) {
 			time.Sleep(2 * time.Second)
 			c.String(http.StatusOK, "Welcome Gin Server")
 		})
-		v1.POST("/players", postPlayers)
+		v1.POST("/players", a.postPlayers)
 		v1.POST("/calc_new_res", postCalculateNewResources)
 	}
 }

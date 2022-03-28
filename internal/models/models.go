@@ -1,11 +1,16 @@
 package models
 
+import "time"
+
 type Player struct {
-	PlayerID    int32  `json:"player_id"`
-	PlayerName  string `json:"player_name"`
-	PlayerScore int64  `json:"player_score"`
-	Active      bool   `json:"active"`
-	Connected   bool   `json:"connected"`
+	PlayerID       int32     `json:"player_id"`
+	PlayerName     string    `json:"player_name"`
+	PlayerEmail    string    `json:"player_email"`
+	PlayerPassword string    `json:"player_password"`
+	PlayerScore    int64     `json:"player_score"`
+	Active         bool      `json:"active"`
+	Connected      bool      `json:"connected"`
+	Created        time.Time `json:"created"`
 }
 
 type Production struct {

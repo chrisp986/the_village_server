@@ -13,11 +13,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func runServer() {
+func (a *application) runServer() {
 	router := gin.Default()
 	router.Use(gin.Recovery())
 
-	routes(router)
+	a.routes(router)
 
 	srv := &http.Server{
 		Addr:         ":8001",
