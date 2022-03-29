@@ -8,33 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var players = []models.Player{
-	{
-		PlayerID:    1,
-		PlayerName:  "player1",
-		PlayerScore: 0,
-		Active:      true,
-		Connected:   false,
-	},
-	{
-		PlayerID:    2,
-		PlayerName:  "player2",
-		PlayerScore: 0,
-		Active:      true,
-		Connected:   true,
-	},
-}
+// func getPlayers(c *gin.Context) {
+// 	if len(players) == 0 {
+// 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No players found!"})
+// 		return
+// 	}
 
-func getPlayers(c *gin.Context) {
-	if len(players) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No players found!"})
-		return
-	}
+// 	c.IndentedJSON(http.StatusOK, players)
+// }
 
-	c.IndentedJSON(http.StatusOK, players)
-}
-
-func getPlayer(c *gin.Context) {
+func (a *application) getPlayer(c *gin.Context) {
 
 	playerID := c.Param("player_id")
 	pID, err := strconv.Atoi(playerID)
@@ -43,19 +26,14 @@ func getPlayer(c *gin.Context) {
 		return
 	}
 
-	var player models.Player
-	for _, p := range players {
-		if p.PlayerID == int32(pID) {
-			player = p
-		}
-	}
+	player, err := a.players.Get(pID)
 
-	if player.PlayerID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No player found!"})
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, player)
+	c.JSON(http.StatusOK, player)
 }
 
 func (a *application) postPlayers(c *gin.Context) {
@@ -69,11 +47,15 @@ func (a *application) postPlayers(c *gin.Context) {
 	}
 
 	// Add the new album to the slice.
-	// players = append(players, newPlayer)
+	id, err := a.players.Insert(newPlayer)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	a.players.Insert(newPlayer)
-
-	c.IndentedJSON(http.StatusCreated, newPlayer)
+	c.JSON(http.StatusCreated, gin.H{
+		"player_id": id,
+	})
 }
 
 func postCalculateNewResources(c *gin.Context) {

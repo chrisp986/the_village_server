@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/chrisp986/the_village_server/internal/database"
@@ -11,15 +10,16 @@ import (
 type application struct {
 	players interface {
 		Insert(models.Player) (int, error)
+		Get(int) (*models.Player, error)
 	}
 }
 
 func main() {
-	fmt.Println("Starting the village server v0.1")
+	log.Println("Starting the village server v0.1")
 
 	err := initDB()
 	if err != nil {
-		fmt.Println("Error initializing database:", err)
+		log.Fatalln("Error initializing database:", err)
 		return
 	}
 
@@ -27,19 +27,12 @@ func main() {
 	if err != nil {
 		log.Fatalln("Error connecting to database:", err)
 	}
+	defer db.Close()
+	log.Println("Connected to database")
 
-	fmt.Println("Connected to database")
+	initTables(db)
+
 	app := &application{players: &database.PlayerModel{DB: db}}
-
-	// var newPlayer = server.Player{
-	// 	PlayerID:    6,
-	// 	PlayerName:  "",
-	// 	PlayerScore: 0,
-	// 	Active:      false,
-	// 	Connected:   false,
-	// }
-
-	// app.players.Insert(newPlayer)
 
 	app.runServer()
 
