@@ -1,30 +1,30 @@
 package models
 
 type Player struct {
-	PlayerID       int32  `json:"player_id"`
-	PlayerName     string `json:"player_name"`
-	PlayerEmail    string `json:"player_email"`
-	PlayerPassword string `json:"player_password"`
-	PlayerScore    int64  `json:"player_score"`
-	Active         bool   `json:"active"`
-	Connected      bool   `json:"connected"`
-	Created        string `json:"created"`
+	PlayerID       int32  `json:"player_id" db:"player_id"`
+	PlayerName     string `json:"player_name" db:"player_name"`
+	PlayerEmail    string `json:"player_email" db:"player_email"`
+	PlayerPassword string `json:"player_password" db:"player_password"`
+	PlayerScore    int64  `json:"player_score" db:"player_score"`
+	Active         bool   `json:"active" db:"active"`
+	Connected      bool   `json:"connected" db:"connected"`
+	Created        string `json:"created" db:"created"`
 }
 
 type Production struct {
-	HunterHut     int64 `json:"hunter_hut"`
-	WoodcutterHut int64 `json:"woodcutter_hut"`
-	Quarry        int64 `json:"quarry"`
-	CopperMine    int64 `json:"copper_mine"`
-	Fountain      int64 `json:"fountain"`
+	HunterHut     int64 `json:"hunter_hut" db:"hunter_hut"`
+	WoodcutterHut int64 `json:"woodcutter_hut" db:"woodcutter_hut"`
+	Quarry        int64 `json:"quarry" db:"quarry"`
+	CopperMine    int64 `json:"copper_mine" db:"copper_mine"`
+	Fountain      int64 `json:"fountain" db:"fountain"`
 }
 
 type Resource struct {
-	Food   int64 `json:"food"`
-	Wood   int64 `json:"wood"`
-	Stone  int64 `json:"stone"`
-	Copper int64 `json:"copper"`
-	Water  int64 `json:"water"`
+	Food   int64 `json:"food" db:"food"`
+	Wood   int64 `json:"wood" db:"wood"`
+	Stone  int64 `json:"stone" db:"stone"`
+	Copper int64 `json:"copper" db:"copper"`
+	Water  int64 `json:"water" db:"water"`
 }
 
 // resource_id INTEGER PRIMARY KEY,
@@ -40,20 +40,20 @@ type ResourceModel struct {
 }
 
 type BuildingConfig struct {
-	BuildingID    int32  `json:"building_id"`
-	Resource      string `json:"resource"`
-	Quality       int32  `json:"quality"`
-	ResRate       int32  `json:"res_rate"`
-	Resource1     int32  `json:"resource1"`
-	CostResource1 int32  `json:"cost_res_1"`
-	Resource2     int32  `json:"res_2"`
-	CostResource2 int32  `json:"cost_res_2"`
-	Resource3     int32  `json:"res_3"`
-	CostResource3 int32  `json:"cost_res_3"`
-	Resource4     int32  `json:"res_4"`
-	CostResource4 int32  `json:"cost_res_4"`
-	Resource5     int32  `json:"res_5"`
-	CostResource5 int32  `json:"cost_res_5"`
+	BuildingID    int32  `json:"building_id" db:"building_id"`
+	Resource      string `json:"resource" db:"resource"`
+	Quality       int32  `json:"quality" db:"quality"`
+	ResRate       int32  `json:"res_rate" db:"res_rate"`
+	Resource1     int32  `json:"resource1" db:"resource1"`
+	CostResource1 int32  `json:"cost_res_1" db:"cost_res_1"`
+	Resource2     int32  `json:"res_2" db:"res_2"`
+	CostResource2 int32  `json:"cost_res_2" db:"cost_res_2"`
+	Resource3     int32  `json:"res_3" db:"res_3"`
+	CostResource3 int32  `json:"cost_res_3" db:"cost_res_3"`
+	Resource4     int32  `json:"res_4" db:"res_4"`
+	CostResource4 int32  `json:"cost_res_4" db:"cost_res_4"`
+	Resource5     int32  `json:"res_5" db:"res_5"`
+	CostResource5 int32  `json:"cost_res_5" db:"cost_res_5"`
 }
 
 // CREATE TABLE IF NOT EXISTS prod_buildings_cfg (

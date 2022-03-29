@@ -72,7 +72,7 @@ const createTable string = `
 const insertResources string = `INSERT INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
 
 const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate, 
-	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);`
+	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
 
 //   CREATE TABLE IF NOT EXISTS building_info (
 // 	building_id INTEGER PRIMARY KEY,
