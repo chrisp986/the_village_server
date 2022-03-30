@@ -19,7 +19,7 @@ type Production struct {
 	Fountain      int64 `json:"fountain" db:"fountain"`
 }
 
-type Resource struct {
+type ResourceType struct {
 	Food   int64 `json:"food" db:"food"`
 	Wood   int64 `json:"wood" db:"wood"`
 	Stone  int64 `json:"stone" db:"stone"`
@@ -27,12 +27,7 @@ type Resource struct {
 	Water  int64 `json:"water" db:"water"`
 }
 
-// resource_id INTEGER PRIMARY KEY,
-// resource TEXT NOT NULL,
-// quality INTEGER NOT NULL,
-// rate INTEGER NOT NULL,
-
-type ResourceModel struct {
+type Resource struct {
 	ResourceID int32  `json:"resource_id" db:"resource_id"`
 	Resource   string `json:"resource" db:"resource"`
 	Quality    int32  `json:"quality" db:"quality"`
@@ -54,6 +49,24 @@ type BuildingConfig struct {
 	CostResource4 int32  `json:"cost_res_4" db:"cost_res_4"`
 	Resource5     int32  `json:"res_5" db:"res_5"`
 	CostResource5 int32  `json:"cost_res_5" db:"cost_res_5"`
+}
+
+// village_id INTEGER PRIMARY KEY,
+// 	player_id INTEGER NOT NULL,
+// 	village_name TEXT NOT NULL,
+// 	size INTEGER NOT NULL,
+// 	status INTEGER NOT NULL,
+// 	location_y INTEGER NOT NULL,
+// 	location_x INTEGER NOT NULL,
+// 	UNIQUE(village_id)
+type Village struct {
+	VillageID     int32  `json:"village_id" db:"village_id"`
+	PlayerID      int32  `json:"player_id" db:"player_id"`
+	VillageName   string `json:"village_name" db:"village_name"`
+	VillageSize   int32  `json:"village_size" db:"village_size"`
+	VillageStatus int32  `json:"village_status" db:"village_status"`
+	VillageLocY   int32  `json:"village_loc_y" db:"village_loc_y"`
+	VillageLocX   int32  `json:"village_loc_x" db:"village_loc_x"`
 }
 
 // CREATE TABLE IF NOT EXISTS prod_buildings_cfg (

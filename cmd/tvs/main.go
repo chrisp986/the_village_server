@@ -9,8 +9,11 @@ import (
 
 type application struct {
 	players interface {
-		Insert(models.Player) (int, error)
+		Insert(models.Player) (int32, error)
 		Get(int) (*models.Player, error)
+	}
+	villages interface {
+		Insert(models.Village) (int, error)
 	}
 }
 
@@ -30,9 +33,10 @@ func main() {
 	defer db.Close()
 	log.Println("Connected to database")
 
-	initTables(db)
+	initResourceTable(db)
+	initVillageTable(db)
 
-	app := &application{players: &database.PlayerModel{DB: db}}
+	app := &application{players: &database.PlayerModel{DB: db}, villages: &database.VillageModel{DB: db}}
 
 	app.runServer()
 

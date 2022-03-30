@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
 	"github.com/jmoiron/sqlx"
@@ -30,10 +32,10 @@ const createTable string = `
 	village_id INTEGER PRIMARY KEY,
 	player_id INTEGER NOT NULL,
 	village_name TEXT NOT NULL,
-	size INTEGER NOT NULL,
-	status INTEGER NOT NULL,
-	location_y INTEGER NOT NULL,
-	location_x INTEGER NOT NULL,
+	village_size INTEGER NOT NULL,
+	village_status INTEGER NOT NULL,
+	village_loc_y INTEGER NOT NULL,
+	village_loc_x INTEGER NOT NULL,
 	UNIQUE(village_id)
   );
 
@@ -72,6 +74,8 @@ const createTable string = `
   `
 
 const insertResources string = `INSERT OR IGNORE INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
+
+const insertVillages string = `INSERT OR IGNORE INTO villages (village_id, player_id, village_name, village_size, village_status, village_loc_y, village_loc_x) VALUES (:village_id, :player_id, :village_name, :village_size, :village_status, :village_loc_y, :village_loc_x)`
 
 const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate, 
 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
@@ -116,19 +120,31 @@ func connectDB() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func initTables(db *sqlx.DB) {
+func initResourceTable(db *sqlx.DB) {
 
 	res := resourcesTable()
 
-	for _, v := range res {
-		_, err := db.NamedExec(insertResources, &v)
+	for _, r := range res {
+		_, err := db.NamedExec(insertResources, &r)
 		if err != nil {
 			log.Fatalln(err)
 		}
 	}
 }
 
-func resourcesTable() []models.ResourceModel {
+func initVillageTable(db *sqlx.DB) {
+
+	vil := villageTable()
+
+	for _, v := range vil {
+		_, err := db.NamedExec(insertVillages, &v)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+}
+
+func resourcesTable() []models.Resource {
 	bytes, err := ioutil.ReadFile(".\\internal\\database\\init\\resources.json")
 
 	if err != nil {
@@ -136,7 +152,7 @@ func resourcesTable() []models.ResourceModel {
 		return nil
 	}
 
-	var res []models.ResourceModel
+	var res []models.Resource
 	err = json.Unmarshal(bytes, &res)
 
 	if err != nil {
@@ -144,5 +160,29 @@ func resourcesTable() []models.ResourceModel {
 		return nil
 	}
 	return res
+}
 
+func villageTable() []models.Village {
+	rand.Seed(time.Now().UnixNano())
+	bytes, err := ioutil.ReadFile(".\\internal\\database\\init\\villages.json")
+
+	if err != nil {
+		fmt.Println("Unable to load config file!", err)
+		return nil
+	}
+
+	var vil []models.Village
+
+	err = json.Unmarshal(bytes, &vil)
+	if err != nil {
+		fmt.Println("JSON decode error!", err)
+		return nil
+	}
+
+	for i := 0; i < len(vil); i++ {
+		vil[i].VillageLocY = int32(randInt(0, 100))
+		vil[i].VillageLocX = int32(randInt(0, 100))
+	}
+
+	return vil
 }

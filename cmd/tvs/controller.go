@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -36,7 +38,30 @@ func (a *application) getPlayer(c *gin.Context) {
 	c.JSON(http.StatusOK, player)
 }
 
-func (a *application) postPlayers(c *gin.Context) {
+//Starts the flow to create a new player
+func (a *application) createNewVillage(player_id int32, player_name string) int {
+
+	nv := models.Village{
+		PlayerID:      player_id,
+		VillageName:   fmt.Sprintf("Village %s", player_name),
+		VillageSize:   100,
+		VillageStatus: 0,
+		VillageLocY:   int32(randInt(0, 100)),
+		VillageLocX:   int32(randInt(0, 100)),
+	}
+
+	fmt.Println("nv", nv)
+
+	village_id, err := a.villages.Insert(nv)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("New village created for: %s with village_id: %d", player_name, village_id)
+	return village_id
+
+}
+
+func (a *application) postPlayer(c *gin.Context) {
 	var newPlayer models.Player
 
 	// Call BindJSON to bind the received JSON to
@@ -47,33 +72,36 @@ func (a *application) postPlayers(c *gin.Context) {
 	}
 
 	// Add the new album to the slice.
-	id, err := a.players.Insert(newPlayer)
+	player_id, err := a.players.Insert(newPlayer)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	village_id := a.createNewVillage(player_id, newPlayer.PlayerName)
+
 	c.JSON(http.StatusCreated, gin.H{
-		"player_id": id,
+		"player_id":  player_id,
+		"village_id": village_id,
 	})
 }
 
-func postCalculateNewResources(c *gin.Context) {
+// func postCalculateNewResources(c *gin.Context) {
 
-	var numProductions models.Production
+// 	var numProductions models.Production
 
-	if err := c.BindJSON(&numProductions); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	if err := c.BindJSON(&numProductions); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	newResources := models.Resource{
-		Food:   numProductions.HunterHut * 2,
-		Wood:   numProductions.WoodcutterHut * 2,
-		Stone:  numProductions.Quarry * 2,
-		Copper: numProductions.CopperMine * 2,
-		Water:  numProductions.Fountain * 2,
-	}
+// 	newResources := models.Resource{
+// 		Food:   numProductions.HunterHut * 2,
+// 		Wood:   numProductions.WoodcutterHut * 2,
+// 		Stone:  numProductions.Quarry * 2,
+// 		Copper: numProductions.CopperMine * 2,
+// 		Water:  numProductions.Fountain * 2,
+// 	}
 
-	c.IndentedJSON(http.StatusOK, newResources)
-}
+// 	c.IndentedJSON(http.StatusOK, newResources)
+// }
