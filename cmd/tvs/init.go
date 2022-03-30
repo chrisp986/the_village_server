@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -47,7 +49,7 @@ const createTable string = `
 	resource TEXT NOT NULL,
 	quality INTEGER NOT NULL,
 	rate INTEGER NOT NULL,
-	UNIQUE(resource_id)
+	UNIQUE(resource)
   );
 
   CREATE TABLE IF NOT EXISTS prod_buildings_cfg (
@@ -69,7 +71,7 @@ const createTable string = `
   );
   `
 
-const insertResources string = `INSERT INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
+const insertResources string = `INSERT OR IGNORE INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
 
 const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate, 
 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
@@ -114,29 +116,33 @@ func connectDB() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func initTables(db *sqlx.DB) (int, error) {
+func initTables(db *sqlx.DB) {
 
-	rm := &models.ResourceModel{
-		// ResourceID: 0,
-		Resource: "wood_2",
-		Quality:  2,
-		Rate:     5,
+	res := resourcesTable()
+
+	for _, v := range res {
+		_, err := db.NamedExec(insertResources, &v)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
+}
 
-	tx := db.MustBegin()
+func resourcesTable() []models.ResourceModel {
+	bytes, err := ioutil.ReadFile(".\\internal\\database\\init\\resources.json")
 
-	result, err := tx.NamedExec(insertResources, &rm)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Unable to load config file!", err)
+		return nil
 	}
 
-	tx.Commit()
+	var res []models.ResourceModel
+	err = json.Unmarshal(bytes, &res)
 
-	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		fmt.Println("JSON decode error!", err)
+		return nil
 	}
-	fmt.Println("Inserted rows: ", id)
-	return int(id), err
+	return res
 
 }

@@ -19,6 +19,6 @@ func (a *application) routes(r *gin.Engine) {
 			c.String(http.StatusOK, "Welcome Gin Server")
 		})
 		v1.POST("/players", a.postPlayers)
-		v1.POST("/calc_new_res", postCalculateNewResources)
+		// v1.POST("/calc_new_res", postCalculateNewResources)
 	}
 }
