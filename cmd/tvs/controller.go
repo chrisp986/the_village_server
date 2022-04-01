@@ -50,8 +50,6 @@ func (a *application) createNewVillage(player_id int32, player_name string) int 
 		VillageLocX:   int32(randInt(0, 100)),
 	}
 
-	fmt.Println("nv", nv)
-
 	village_id, err := a.villages.Insert(nv)
 	if err != nil {
 		log.Println(err)

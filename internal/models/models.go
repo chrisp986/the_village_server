@@ -69,6 +69,42 @@ type Village struct {
 	VillageLocX   int32  `json:"village_loc_x" db:"village_loc_x"`
 }
 
+// HunterHut     int64 `json:"hunter_hut" db:"hunter_hut"`
+// 	WoodcutterHut int64 `json:"woodcutter_hut" db:"woodcutter_hut"`
+// 	Quarry        int64 `json:"quarry" db:"quarry"`
+// 	CopperMine    int64 `json:"copper_mine" db:"copper_mine"`
+// 	Fountain      int64 `json:"fountain" db:"fountain"`
+
+type VillageSetup struct {
+	VillageID       int32 `json:"village_id" db:"village_id"`
+	PlayerID        int32 `json:"player_id" db:"player_id"`
+	HunterHut_1     int32 `json:"hunterhut_1" db:"hunterhut_1"`
+	HunterHut_2     int32 `json:"hunterhut_2" db:"hunterhut_2"`
+	HunterHut_3     int32 `json:"hunterhut_3" db:"hunterhut_3"`
+	HunterHut_4     int32 `json:"hunterhut_4" db:"hunterhut_4"`
+	HunterHut_5     int32 `json:"hunterhut_5" db:"hunterhut_5"`
+	WoodcutterHut_1 int32 `json:"woodcutterhut_1" db:"woodcutterhut_1"`
+	WoodcutterHut_2 int32 `json:"woodcutterhut_2" db:"woodcutterhut_2"`
+	WoodcutterHut_3 int32 `json:"woodcutterhut_3" db:"woodcutterhut_3"`
+	WoodcutterHut_4 int32 `json:"woodcutterhut_4" db:"woodcutterhut_4"`
+	WoodcutterHut_5 int32 `json:"woodcutterhut_5" db:"woodcutterhut_5"`
+	Quarry_1        int32 `json:"quarry_1" db:"quarry_1"`
+	Quarry_2        int32 `json:"quarry_2" db:"quarry_2"`
+	Quarry_3        int32 `json:"quarry_3" db:"quarry_3"`
+	Quarry_4        int32 `json:"quarry_4" db:"quarry_4"`
+	Quarry_5        int32 `json:"quarry_5" db:"quarry_5"`
+	CopperMine_1    int32 `json:"coppermine_1" db:"coppermine_1"`
+	CopperMine_2    int32 `json:"coppermine_2" db:"coppermine_2"`
+	CopperMine_3    int32 `json:"coppermine_3" db:"coppermine_3"`
+	CopperMine_4    int32 `json:"coppermine_4" db:"coppermine_4"`
+	CopperMine_5    int32 `json:"coppermine_5" db:"coppermine_5"`
+	Fountain_1      int32 `json:"fountain_1" db:"fountain_1"`
+	Fountain_2      int32 `json:"fountain_2" db:"fountain_2"`
+	Fountain_3      int32 `json:"fountain_3" db:"fountain_3"`
+	Fountain_4      int32 `json:"fountain_4" db:"fountain_4"`
+	Fountain_5      int32 `json:"fountain_5" db:"fountain_5"`
+}
+
 // CREATE TABLE IF NOT EXISTS prod_buildings_cfg (
 // 	building_id INTEGER PRIMARY KEY,
 // 	resource TEXT NOT NULL,

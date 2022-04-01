@@ -71,7 +71,40 @@ const createTable string = `
 	cost_res_5 INTEGER NOT NULL,
 	UNIQUE(building_id)
   );
+
+CREATE TABLE IF NOT EXISTS village_setup (
+	village_id INTEGER NOT NULL, 
+	player_id INTEGER NOT NULL,
+	hunterhut_1 INTEGER NOT NULL DEFAULT 1, 
+	hunterhut_2 INTEGER NOT NULL, 
+	hunterhut_3 INTEGER NOT NULL, 
+	hunterhut_4 INTEGER NOT NULL, 
+	hunterhut_5 INTEGER NOT NULL,
+	woodcutterhut_1 INTEGER NOT NULL DEFAULT 1, 
+	woodcutterhut_2 INTEGER NOT NULL, 
+	woodcutterhut_3 INTEGER NOT NULL, 
+	woodcutterhut_4 INTEGER NOT NULL, 
+	woodcutterhut_5 INTEGER NOT NULL,
+	quarry_1 INTEGER NOT NULL DEFAULT 1, 
+	quarry_2 INTEGER NOT NULL, 
+	quarry_3 INTEGER NOT NULL, 
+	quarry_4 INTEGER NOT NULL, 
+	quarry_5 INTEGER NOT NULL,
+	coppermine_1 INTEGER NOT NULL DEFAULT 1, 
+	coppermine_2 INTEGER NOT NULL, 
+	coppermine_3 INTEGER NOT NULL, 
+	coppermine_4 INTEGER NOT NULL, 
+	coppermine_5 INTEGER NOT NULL,
+	fountain_1 INTEGER NOT NULL DEFAULT 1, 
+	fountain_2 INTEGER NOT NULL, 
+	fountain_3 INTEGER NOT NULL, 
+	fountain_4 INTEGER NOT NULL, 
+	fountain_5 INTEGER NOT NULL,
+	UNIQUE(village_id)
+	);
   `
+
+const insertVillageSetup string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, hunterhut_1, hunterhut_2, hunterhut_3, hunterhut_4, hunterhut_5, woodcutterhut_1, woodcutterhut_2, woodcutterhut_3, woodcutterhut_4, woodcutterhut_5,quarry_1, quarry_2, quarry_3, quarry_4, quarry_5, coppermine_1, coppermine_2, coppermine_3, coppermine_4, coppermine_5, fountain_1, fountain_2, fountain_3, fountain_4, fountain_5) VALUES (:village_id, :player_id, :hunterhut_1, :hunterhut_2, :hunterhut_3, :hunterhut_4, :hunterhut_5, :woodcutterhut_1, :woodcutterhut_2, :woodcutterhut_3, :woodcutterhut_4, :woodcutterhut_5, :quarry_1, :quarry_2, :quarry_3, :quarry_4, :quarry_5, :coppermine_1, :coppermine_2, :coppermine_3, :coppermine_4, :coppermine_5, :fountain_1, :fountain_2, :fountain_3, :fountain_4, :fountain_5)`
 
 const insertResources string = `INSERT OR IGNORE INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
 
