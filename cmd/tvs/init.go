@@ -74,7 +74,7 @@ const createTable string = `
   );
 
 CREATE TABLE IF NOT EXISTS village_setup (
-	village_id INTEGER NOT NULL, 
+	village_id INTEGER NOT NULL PRIMARY KEY, 
 	player_id INTEGER NOT NULL,
 	hunterhut_1 INTEGER NOT NULL DEFAULT 1, 
 	hunterhut_2 INTEGER NOT NULL, 
@@ -110,6 +110,8 @@ const insertVillageSetup string = `INSERT OR IGNORE INTO village_setup (village_
 const insertResources string = `INSERT OR IGNORE INTO resources (resource, quality, rate) VALUES (:resource, :quality, :rate)`
 
 const insertVillages string = `INSERT OR IGNORE INTO villages (village_id, player_id, village_name, village_size, village_status, village_loc_y, village_loc_x) VALUES (:village_id, :player_id, :village_name, :village_size, :village_status, :village_loc_y, :village_loc_x)`
+
+const insertVillageSetupInit string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, hunterhut_1, hunterhut_2, hunterhut_3, hunterhut_4, hunterhut_5, woodcutterhut_1, woodcutterhut_2, woodcutterhut_3, woodcutterhut_4, woodcutterhut_5,quarry_1, quarry_2, quarry_3, quarry_4, quarry_5, coppermine_1, coppermine_2, coppermine_3, coppermine_4, coppermine_5, fountain_1, fountain_2, fountain_3, fountain_4, fountain_5) VALUES (:village_id, :player_id, :hunterhut_1, :hunterhut_2, :hunterhut_3, :hunterhut_4, :hunterhut_5, :woodcutterhut_1, :woodcutterhut_2, :woodcutterhut_3, :woodcutterhut_4, :woodcutterhut_5, :quarry_1, :quarry_2, :quarry_3, :quarry_4, :quarry_5, :coppermine_1, :coppermine_2, :coppermine_3, :coppermine_4, :coppermine_5, :fountain_1, :fountain_2, :fountain_3, :fountain_4, :fountain_5)`
 
 const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate, 
 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
@@ -158,11 +160,15 @@ func initResourceTable(db *sqlx.DB) {
 
 	res := resourcesTable()
 
+	db.MustExec("CREATE TABLE IF NOT EXISTS player_resources (village_id INTEGER PRIMARY KEY, player_id INTEGER NOT NULL);")
+
 	for _, r := range res {
 		_, err := db.NamedExec(insertResources, &r)
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		db.MustExec(fmt.Sprintf("ALTER TABLE player_resources ADD COLUMN %s NOT NULL DEFAULT 0;", r.Resource))
 	}
 }
 
@@ -175,6 +181,18 @@ func initVillageTable(db *sqlx.DB) {
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		vs := models.VillageSetup{
+			VillageID:       v.VillageID,
+			PlayerID:        v.PlayerID,
+			HunterHut_1:     1,
+			WoodcutterHut_1: 1,
+			Quarry_1:        1,
+			CopperMine_1:    1,
+			Fountain_1:      1,
+		}
+
+		_, err = db.NamedExec(insertVillageSetupInit, &vs)
 	}
 }
 
