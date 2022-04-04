@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS player_resources (
 	stone INTEGER NOT NULL,
 	copper INTEGER NOT NULL,
 	water INTEGER NOT NULL,
-	);"
+	gold INTEGER NOT NULL,
+	UNIQUE(village_id)
+	);
   
   CREATE TABLE IF NOT EXISTS villages (
 	village_id INTEGER PRIMARY KEY,

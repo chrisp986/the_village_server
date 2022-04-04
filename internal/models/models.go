@@ -11,6 +11,17 @@ type Player struct {
 	Created        string `json:"created" db:"created"`
 }
 
+type PlayerResource struct {
+	VillageID int32 `json:"village_id" db:"village_id"`
+	PlayerID  int32 `json:"player_id" db:"player_id"`
+	Food      int32 `json:"food" db:"food"`
+	Wood      int32 `json:"wood" db:"wood"`
+	Stone     int32 `json:"stone" db:"stone"`
+	Copper    int32 `json:"copper" db:"copper"`
+	Water     int32 `json:"water" db:"water"`
+	Gold      int32 `json:"gold" db:"gold"`
+}
+
 type Production struct {
 	HunterHut     int64 `json:"hunter_hut" db:"hunter_hut"`
 	WoodcutterHut int64 `json:"woodcutter_hut" db:"woodcutter_hut"`
