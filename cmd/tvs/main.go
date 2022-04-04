@@ -15,6 +15,10 @@ type application struct {
 	villages interface {
 		Insert(models.Village) (int, error)
 	}
+	villageSetup interface {
+		Insert(models.VillageSetup) (int, error)
+		InsertWithIDCheck(int, int32) (int, error)
+	}
 }
 
 func main() {
@@ -36,7 +40,10 @@ func main() {
 	initResourceTable(db)
 	initVillageTable(db)
 
-	app := &application{players: &database.PlayerModel{DB: db}, villages: &database.VillageModel{DB: db}}
+	app := &application{
+		players:      &database.PlayerModel{DB: db},
+		villages:     &database.VillageModel{DB: db},
+		villageSetup: &database.VillageSetupModel{DB: db}}
 
 	app.runServer()
 

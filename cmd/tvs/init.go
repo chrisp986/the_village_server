@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"path/filepath"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -178,7 +179,9 @@ func initVillageTable(db *sqlx.DB) {
 }
 
 func resourcesTable() []models.Resource {
-	bytes, err := ioutil.ReadFile(".\\internal\\database\\init\\resources.json")
+
+	file := filepath.FromSlash("./internal/database/init/resources.json")
+	bytes, err := ioutil.ReadFile(file)
 
 	if err != nil {
 		fmt.Println("Unable to load config file!", err)
@@ -196,8 +199,11 @@ func resourcesTable() []models.Resource {
 }
 
 func villageTable() []models.Village {
+
 	rand.Seed(time.Now().UnixNano())
-	bytes, err := ioutil.ReadFile(".\\internal\\database\\init\\villages.json")
+
+	file := filepath.FromSlash("./internal/database/init/villages.json")
+	bytes, err := ioutil.ReadFile(file)
 
 	if err != nil {
 		fmt.Println("Unable to load config file!", err)

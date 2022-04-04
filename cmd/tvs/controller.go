@@ -39,7 +39,7 @@ func (a *application) getPlayer(c *gin.Context) {
 }
 
 //Starts the flow to create a new player
-func (a *application) createNewVillage(player_id int32, player_name string) int {
+func (a *application) createNewVillage(player_id int32, player_name string) (int, error) {
 
 	nv := models.Village{
 		PlayerID:      player_id,
@@ -53,12 +53,14 @@ func (a *application) createNewVillage(player_id int32, player_name string) int 
 	village_id, err := a.villages.Insert(nv)
 	if err != nil {
 		log.Println(err)
+		return 0, err
 	}
 	log.Printf("New village created for: %s with village_id: %d", player_name, village_id)
-	return village_id
+	return village_id, err
 
 }
 
+// postPlayer creates a new player
 func (a *application) postPlayer(c *gin.Context) {
 	var newPlayer models.Player
 
@@ -72,11 +74,21 @@ func (a *application) postPlayer(c *gin.Context) {
 	// Add the new album to the slice.
 	player_id, err := a.players.Insert(newPlayer)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "players.Insert"})
 		return
 	}
 
-	village_id := a.createNewVillage(player_id, newPlayer.PlayerName)
+	village_id, err := a.createNewVillage(player_id, newPlayer.PlayerName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "createNewVillage"})
+		return
+	}
+
+	_, err = a.villageSetup.InsertWithIDCheck(village_id, player_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "villageSetup.InsertWithIDCheck"})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"player_id":  player_id,
