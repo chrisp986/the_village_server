@@ -28,6 +28,16 @@ const createTable string = `
   	created TEXT NOT NULL,
   	UNIQUE(player_name)
   );
+
+CREATE TABLE IF NOT EXISTS player_resources (
+	village_id INTEGER PRIMARY KEY, 
+	player_id INTEGER NOT NULL,
+	food INTEGER NOT NULL,
+	wood INTEGER NOT NULL,
+	stone INTEGER NOT NULL,
+	copper INTEGER NOT NULL,
+	water INTEGER NOT NULL,
+	);"
   
   CREATE TABLE IF NOT EXISTS villages (
 	village_id INTEGER PRIMARY KEY,
@@ -160,15 +170,12 @@ func initResourceTable(db *sqlx.DB) {
 
 	res := resourcesTable()
 
-	db.MustExec("CREATE TABLE IF NOT EXISTS player_resources (village_id INTEGER PRIMARY KEY, player_id INTEGER NOT NULL);")
-
 	for _, r := range res {
 		_, err := db.NamedExec(insertResources, &r)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		db.MustExec(fmt.Sprintf("ALTER TABLE player_resources ADD COLUMN %s NOT NULL DEFAULT 0;", r.Resource))
 	}
 }
 
@@ -242,4 +249,8 @@ func villageTable() []models.Village {
 	}
 
 	return vil
+}
+
+func initPlayerResourcesTable(db *sqlx.DB) {
+
 }
