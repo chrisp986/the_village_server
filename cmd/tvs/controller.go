@@ -28,7 +28,7 @@ func (a *application) getPlayer(c *gin.Context) {
 		return
 	}
 
-	player, err := a.players.Get(pID)
+	player, err := a.players.Get(uint32(pID))
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -39,15 +39,15 @@ func (a *application) getPlayer(c *gin.Context) {
 }
 
 //Starts the flow to create a new player
-func (a *application) createNewVillage(player_id int32, player_name string) (int, error) {
+func (a *application) createNewVillage(player_id uint32, player_name string) (uint32, error) {
 
 	nv := models.Village{
 		PlayerID:      player_id,
 		VillageName:   fmt.Sprintf("Village %s", player_name),
 		VillageSize:   100,
 		VillageStatus: 0,
-		VillageLocY:   int32(randInt(0, 100)),
-		VillageLocX:   int32(randInt(0, 100)),
+		VillageLocY:   uint32(randInt(0, 100)),
+		VillageLocX:   uint32(randInt(0, 100)),
 	}
 
 	village_id, err := a.villages.Insert(nv)
@@ -64,31 +64,43 @@ func (a *application) createNewVillage(player_id int32, player_name string) (int
 func (a *application) postPlayer(c *gin.Context) {
 	var newPlayer models.Player
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
 	if err := c.BindJSON(&newPlayer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Add the new album to the slice.
+	// Add the new player to the players table
 	player_id, err := a.players.Insert(newPlayer)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "players.Insert"})
 		return
 	}
 
+	// Create a new village for the player
 	village_id, err := a.createNewVillage(player_id, newPlayer.PlayerName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "createNewVillage"})
 		return
 	}
 
+	// Create a new village setup for the player
 	_, err = a.villageSetup.InsertWithIDCheck(village_id, player_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "villageSetup.InsertWithIDCheck"})
 		return
 	}
+
+	// Add the new player to the players_resources table
+	village_id, err = a.villageResources.Insert(models.VillageResource{
+		VillageID: village_id,
+		PlayerID:  player_id,
+		Food:      100,
+		Wood:      100,
+		Stone:     100,
+		Copper:    100,
+		Water:     100,
+		Gold:      20,
+	})
 
 	c.JSON(http.StatusCreated, gin.H{
 		"player_id":  player_id,

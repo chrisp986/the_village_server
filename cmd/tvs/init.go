@@ -17,6 +17,12 @@ import (
 const db_file string = "tv_server.db"
 
 const createTable string = `
+	CREATE TABLE IF NOT EXISTS genesis (
+		genesis_tick INTEGER NOT NULL,
+		version INTEGER NOT NULL,
+		UNIQUE(version)
+	);
+
   CREATE TABLE IF NOT EXISTS players (
   	player_id INTEGER PRIMARY KEY,
   	player_name TEXT NOT NULL,
@@ -29,7 +35,7 @@ const createTable string = `
   	UNIQUE(player_name)
   );
 
-CREATE TABLE IF NOT EXISTS player_resources (
+CREATE TABLE IF NOT EXISTS village_resources (
 	village_id INTEGER PRIMARY KEY, 
 	player_id INTEGER NOT NULL,
 	food INTEGER NOT NULL,
@@ -246,8 +252,8 @@ func villageTable() []models.Village {
 	}
 
 	for i := 0; i < len(vil); i++ {
-		vil[i].VillageLocY = int32(randInt(0, 100))
-		vil[i].VillageLocX = int32(randInt(0, 100))
+		vil[i].VillageLocY = uint32(randInt(0, 100))
+		vil[i].VillageLocX = uint32(randInt(0, 100))
 	}
 
 	return vil

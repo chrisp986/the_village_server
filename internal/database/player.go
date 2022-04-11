@@ -9,7 +9,7 @@ type PlayerModel struct {
 	DB *sqlx.DB
 }
 
-func (m *PlayerModel) Insert(newPlayer models.Player) (int32, error) {
+func (m *PlayerModel) Insert(newPlayer models.Player) (uint32, error) {
 
 	stmt := `INSERT INTO players (player_name, player_email, player_password, player_score, active, connected, created)
 	VALUES (?, ?, ?, ?, ?, ?, datetime('now','localtime'));`
@@ -33,10 +33,10 @@ func (m *PlayerModel) Insert(newPlayer models.Player) (int32, error) {
 		return 0, err
 	}
 
-	return int32(id), nil
+	return uint32(id), nil
 }
 
-func (m *PlayerModel) Get(pID int) (*models.Player, error) {
+func (m *PlayerModel) Get(pID uint32) (*models.Player, error) {
 
 	p := &models.Player{}
 

@@ -11,7 +11,7 @@ type VillageModel struct {
 	DB *sqlx.DB
 }
 
-func (m *VillageModel) Insert(newVillage models.Village) (int, error) {
+func (m *VillageModel) Insert(newVillage models.Village) (uint32, error) {
 
 	stmt := `INSERT OR IGNORE INTO villages (player_id, village_name, village_size, village_status, village_loc_y, village_loc_x) VALUES (:player_id, :village_name, :village_size, :village_status, :village_loc_y, :village_loc_x);`
 
@@ -26,5 +26,5 @@ func (m *VillageModel) Insert(newVillage models.Village) (int, error) {
 		return 0, err
 	}
 
-	return int(id), nil
+	return uint32(id), nil
 }

@@ -7,11 +7,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type PlayerResourcesModel struct {
+type VillageResourcesModel struct {
 	DB *sqlx.DB
 }
 
-func (m *PlayerResourcesModel) Insert(newPlayerResources models.PlayerResource) (int, error) {
+func (m *VillageResourcesModel) Insert(newPlayerResources models.VillageResource) (uint32, error) {
 
 	// CREATE TABLE IF NOT EXISTS player_resources (
 	// 	village_id INTEGER PRIMARY KEY,
@@ -25,7 +25,7 @@ func (m *PlayerResourcesModel) Insert(newPlayerResources models.PlayerResource) 
 	// 	UNIQUE(village_id)
 	// 	);
 
-	stmt := `INSERT OR IGNORE INTO player_resources (village_id, player_id, food, wood, stone, copper, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :copper, :water, :gold);`
+	stmt := `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, copper, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :copper, :water, :gold);`
 
 	result, err := m.DB.NamedExec(stmt, &newPlayerResources)
 	if err != nil {
@@ -38,5 +38,5 @@ func (m *PlayerResourcesModel) Insert(newPlayerResources models.PlayerResource) 
 		return 0, err
 	}
 
-	return int(id), nil
+	return uint32(id), nil
 }
