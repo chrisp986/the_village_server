@@ -1,0 +1,132 @@
+[
+    {
+        "resource_id": 0,
+        "quality": 1,
+        "rate": 2
+    },
+    {
+        "resource_id": 0,
+        "quality": 2,
+        "rate": 5
+    },
+    {
+        "resource_id": 0,
+        "quality": 3,
+        "rate": 13
+    },
+    {
+        "resource_id": 0,
+        "quality": 4,
+        "rate": 21
+    },
+    {
+        "resource_id": 0,
+        "quality": 5,
+        "rate": 55
+    },
+    {
+        "resource_id": 1,
+        "quality": 1,
+        "rate": 2
+    },
+    {
+        "resource_id": 1,
+        "quality": 2,
+        "rate": 5
+    },
+    {
+        "resource_id": 1,
+        "quality": 3,
+        "rate": 13
+    },
+    {
+        "resource_id": 1,
+        "quality": 4,
+        "rate": 21
+    },
+    {
+        "resource_id": 1,
+        "quality": 5,
+        "rate": 55
+    },
+    {
+        "resource_id": 2,
+        "quality": 1,
+        "rate": 2
+    },
+    {
+        "resource_id": 2,
+        "quality": 2,
+        "rate": 5
+    },
+    {
+        "resource_id": 2,
+        "quality": 3,
+        "rate": 13
+    },
+    {
+        "resource_id": 2,
+        "quality": 4,
+        "rate": 21
+    },
+    {
+        "resource_id": 2,
+        "quality": 5,
+        "rate": 55
+    },
+    {
+        "resource_id": 3,
+        "quality": 1,
+        "rate": 1
+    },
+    {
+        "resource_id": 3,
+        "quality": 2,
+        "rate": 5
+    },
+    {
+        "resource_id": 3,
+        "quality": 3,
+        "rate": 13
+    },
+    {
+        "resource_id": 3,
+        "quality": 4,
+        "rate": 21
+    },
+    {
+        "resource_id": 3,
+        "quality": 5,
+        "rate": 55
+    },
+    {
+        "resource_id": 4,
+        "quality": 1,
+        "rate": 1
+    },
+    {
+        "resource_id": 4,
+        "quality": 2,
+        "rate": 5
+    },
+    {
+        "resource_id": 4,
+        "quality": 3,
+        "rate": 13
+    },
+    {
+        "resource_id": 4,
+        "quality": 4,
+        "rate": 21
+    },
+    {
+        "resource_id": 4,
+        "quality": 5,
+        "rate": 55
+    },
+    {
+        "resource_id": 5,
+        "quality": 1,
+        "rate": 1
+    }
+]

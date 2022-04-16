@@ -38,11 +38,29 @@ type ResourceType struct {
 	Water  uint64 `json:"water" db:"water"`
 }
 
-type Resource struct {
+type Resources struct {
 	ResourceID uint32 `json:"resource_id" db:"resource_id"`
 	Resource   string `json:"resource" db:"resource"`
 	Quality    uint32 `json:"quality" db:"quality"`
+}
+
+type ResourceRates struct {
+	ResourceID uint32 `json:"resource_id" db:"resource_id"`
+	Quality    uint32 `json:"quality" db:"quality"`
 	Rate       uint32 `json:"rate" db:"rate"`
+}
+
+type Buildings struct {
+	BuildingID     uint32 `json:"building_id" db:"building_id"`
+	Name           string `json:"name" db:"name"`
+	Quality        uint32 `json:"quality" db:"quality"`
+	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
+	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
+}
+
+type BuildingCount struct {
+	BuildingID uint32 `json:"building_id" db:"building_id"`
+	Count      uint32 `json:"count" db:"count"`
 }
 
 type BuildingConfig struct {
@@ -87,33 +105,11 @@ type Village struct {
 // 	Fountain      int64 `json:"fountain" db:"fountain"`
 
 type VillageSetup struct {
-	VillageID       uint32 `json:"village_id" db:"village_id"`
-	PlayerID        uint32 `json:"player_id" db:"player_id"`
-	HunterHut_1     uint32 `json:"hunterhut_1" db:"hunterhut_1"`
-	HunterHut_2     uint32 `json:"hunterhut_2" db:"hunterhut_2"`
-	HunterHut_3     uint32 `json:"hunterhut_3" db:"hunterhut_3"`
-	HunterHut_4     uint32 `json:"hunterhut_4" db:"hunterhut_4"`
-	HunterHut_5     uint32 `json:"hunterhut_5" db:"hunterhut_5"`
-	WoodcutterHut_1 uint32 `json:"woodcutterhut_1" db:"woodcutterhut_1"`
-	WoodcutterHut_2 uint32 `json:"woodcutterhut_2" db:"woodcutterhut_2"`
-	WoodcutterHut_3 uint32 `json:"woodcutterhut_3" db:"woodcutterhut_3"`
-	WoodcutterHut_4 uint32 `json:"woodcutterhut_4" db:"woodcutterhut_4"`
-	WoodcutterHut_5 uint32 `json:"woodcutterhut_5" db:"woodcutterhut_5"`
-	Quarry_1        uint32 `json:"quarry_1" db:"quarry_1"`
-	Quarry_2        uint32 `json:"quarry_2" db:"quarry_2"`
-	Quarry_3        uint32 `json:"quarry_3" db:"quarry_3"`
-	Quarry_4        uint32 `json:"quarry_4" db:"quarry_4"`
-	Quarry_5        uint32 `json:"quarry_5" db:"quarry_5"`
-	CopperMine_1    uint32 `json:"coppermine_1" db:"coppermine_1"`
-	CopperMine_2    uint32 `json:"coppermine_2" db:"coppermine_2"`
-	CopperMine_3    uint32 `json:"coppermine_3" db:"coppermine_3"`
-	CopperMine_4    uint32 `json:"coppermine_4" db:"coppermine_4"`
-	CopperMine_5    uint32 `json:"coppermine_5" db:"coppermine_5"`
-	Fountain_1      uint32 `json:"fountain_1" db:"fountain_1"`
-	Fountain_2      uint32 `json:"fountain_2" db:"fountain_2"`
-	Fountain_3      uint32 `json:"fountain_3" db:"fountain_3"`
-	Fountain_4      uint32 `json:"fountain_4" db:"fountain_4"`
-	Fountain_5      uint32 `json:"fountain_5" db:"fountain_5"`
+	VillageID  uint32 `json:"village_id" db:"village_id"`
+	PlayerID   uint32 `json:"player_id" db:"player_id"`
+	Buildings  string `json:"buildings" db:"buildings"`
+	Status     uint32 `json:"status" db:"status"`
+	LastUpdate string `json:"last_update" db:"last_update"`
 }
 
 // CREATE TABLE IF NOT EXISTS prod_buildings_cfg (

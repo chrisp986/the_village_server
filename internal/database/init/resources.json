@@ -1,158 +1,32 @@
 [
     {
         "resource_id": 0,
-        "resource": "food_1",
-        "quality": 1,
-        "rate": 2
+        "resource": "food",
+        "quality": 0
     },
     {
         "resource_id": 1,
-        "resource": "food_2",
-        "quality": 2,
-        "rate": 5
+        "resource": "wood",
+        "quality": 0
     },
     {
         "resource_id": 2,
-        "resource": "food_3",
-        "quality": 3,
-        "rate": 13
+        "resource": "stone",
+        "quality": 0
     },
     {
         "resource_id": 3,
-        "resource": "food_4",
-        "quality": 4,
-        "rate": 21
+        "resource": "metal",
+        "quality": 0
     },
     {
         "resource_id": 4,
-        "resource": "food_5",
-        "quality": 5,
-        "rate": 55
+        "resource": "water",
+        "quality": 0
     },
     {
         "resource_id": 5,
-        "resource": "wood_1",
-        "quality": 1,
-        "rate": 2
-    },
-    {
-        "resource_id": 6,
-        "resource": "wood_2",
-        "quality": 2,
-        "rate": 5
-    },
-    {
-        "resource_id": 7,
-        "resource": "wood_3",
-        "quality": 3,
-        "rate": 13
-    },
-    {
-        "resource_id": 8,
-        "resource": "wood_4",
-        "quality": 4,
-        "rate": 21
-    },
-    {
-        "resource_id": 9,
-        "resource": "wood_5",
-        "quality": 5,
-        "rate": 55
-    },
-    {
-        "resource_id": 10,
-        "resource": "stone_1",
-        "quality": 1,
-        "rate": 2
-    },
-    {
-        "resource_id": 11,
-        "resource": "stone_2",
-        "quality": 2,
-        "rate": 5
-    },
-    {
-        "resource_id": 12,
-        "resource": "stone_3",
-        "quality": 3,
-        "rate": 13
-    },
-    {
-        "resource_id": 13,
-        "resource": "stone_4",
-        "quality": 4,
-        "rate": 21
-    },
-    {
-        "resource_id": 14,
-        "resource": "stone_5",
-        "quality": 5,
-        "rate": 55
-    },
-    {
-        "resource_id": 15,
-        "resource": "copper_1",
-        "quality": 1,
-        "rate": 1
-    },
-    {
-        "resource_id": 16,
-        "resource": "copper_2",
-        "quality": 2,
-        "rate": 5
-    },
-    {
-        "resource_id": 17,
-        "resource": "copper_3",
-        "quality": 3,
-        "rate": 13
-    },
-    {
-        "resource_id": 18,
-        "resource": "copper_4",
-        "quality": 4,
-        "rate": 21
-    },
-    {
-        "resource_id": 19,
-        "resource": "copper_5",
-        "quality": 5,
-        "rate": 55
-    },
-    {
-        "resource_id": 20,
-        "resource": "water_1",
-        "quality": 1,
-        "rate": 1
-    },
-    {
-        "resource_id": 21,
-        "resource": "water_2",
-        "quality": 2,
-        "rate": 5
-    },
-    {
-        "resource_id": 22,
-        "resource": "water_3",
-        "quality": 3,
-        "rate": 13
-    },
-    {
-        "resource_id": 23,
-        "resource": "water_4",
-        "quality": 4,
-        "rate": 21
-    },
-    {
-        "resource_id": 24,
-        "resource": "water_5",
-        "quality": 5,
-        "rate": 55
-    },
-    {
-        "resource_id": 25,
-        "resource": "gold",
-        "quality": 1,
-        "rate": 1
+        "resource": "currency",
+        "quality": 0
     }
 ]

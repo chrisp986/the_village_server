@@ -1,0 +1,177 @@
+[
+    {
+        "building_id": 0,
+        "name": "HunterHut",
+        "quality": 1,
+        "resource_id": 0,
+        "production_rate": 2
+    },
+    {
+        "building_id": 1,
+        "name": "HunterHut",
+        "quality": 2,
+        "resource_id": 0,
+        "production_rate": 5
+    },
+    {
+        "building_id": 2,
+        "name": "HunterHut",
+        "quality": 3,
+        "resource_id": 0,
+        "production_rate": 13
+    },
+    {
+        "building_id": 3,
+        "name": "HunterHut",
+        "quality": 4,
+        "resource_id": 0,
+        "production_rate": 21
+    },
+    {
+        "building_id": 4,
+        "name": "HunterHut",
+        "quality": 5,
+        "resource_id": 0,
+        "production_rate": 55
+    },
+    {
+        "building_id": 5,
+        "name": "WoodcutterHut",
+        "quality": 1,
+        "resource_id": 1,
+        "production_rate": 2
+    },
+    {
+        "building_id": 6,
+        "name": "WoodcutterHut",
+        "quality": 2,
+        "resource_id": 1,
+        "production_rate": 5
+    },
+    {
+        "building_id": 7,
+        "name": "WoodcutterHut",
+        "quality": 3,
+        "resource_id": 1,
+        "production_rate": 13
+    },
+    {
+        "building_id": 8,
+        "name": "WoodcutterHut",
+        "quality": 4,
+        "resource_id": 1,
+        "production_rate": 21
+    },
+    {
+        "building_id": 9,
+        "name": "WoodcutterHut",
+        "quality": 5,
+        "resource_id": 1,
+        "production_rate": 55
+    },
+    {
+        "building_id": 10,
+        "name": "Quarry",
+        "quality": 1,
+        "resource_id": 2,
+        "production_rate": 2
+    },
+    {
+        "building_id": 11,
+        "name": "Quarry",
+        "quality": 2,
+        "resource_id": 2,
+        "production_rate": 5
+    },
+    {
+        "building_id": 12,
+        "name": "Quarry",
+        "quality": 3,
+        "resource_id": 2,
+        "production_rate": 13
+    },
+    {
+        "building_id": 13,
+        "name": "Quarry",
+        "quality": 4,
+        "resource_id": 2,
+        "production_rate": 21
+    },
+    {
+        "building_id": 14,
+        "name": "Quarry",
+        "quality": 5,
+        "resource_id": 2,
+        "production_rate": 55
+    },
+    {
+        "building_id": 15,
+        "name": "Mine",
+        "quality": 1,
+        "resource_id": 3,
+        "production_rate": 1
+    },
+    {
+        "building_id": 16,
+        "name": "Mine",
+        "quality": 2,
+        "resource_id": 3,
+        "production_rate": 5
+    },
+    {
+        "building_id": 17,
+        "name": "Mine",
+        "quality": 3,
+        "resource_id": 3,
+        "production_rate": 13
+    },
+    {
+        "building_id": 18,
+        "name": "Mine",
+        "quality": 4,
+        "resource_id": 3,
+        "production_rate": 21
+    },
+    {
+        "building_id": 19,
+        "name": "Mine",
+        "quality": 5,
+        "resource_id": 3,
+        "production_rate": 55
+    },
+    {
+        "building_id": 20,
+        "name": "Fountain",
+        "quality": 1,
+        "resource_id": 4,
+        "production_rate": 1
+    },
+    {
+        "building_id": 21,
+        "name": "Fountain",
+        "quality": 2,
+        "resource_id": 4,
+        "production_rate": 5
+    },
+    {
+        "building_id": 22,
+        "name": "Fountain",
+        "quality": 3,
+        "resource_id": 4,
+        "production_rate": 13
+    },
+    {
+        "building_id": 23,
+        "name": "Fountain",
+        "quality": 4,
+        "resource_id": 4,
+        "production_rate": 21
+    },
+    {
+        "building_id": 24,
+        "name": "Fountain",
+        "quality": 5,
+        "resource_id": 4,
+        "production_rate": 55
+    }
+]

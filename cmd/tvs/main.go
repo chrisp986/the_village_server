@@ -26,6 +26,10 @@ type application struct {
 	villageResources interface {
 		Insert(models.VillageResource) (uint32, error)
 	}
+	calcResources interface {
+		GetActivePlayers() ([]uint32, error)
+		CalculateResources() error
+	}
 }
 
 func main() {
@@ -44,37 +48,46 @@ func main() {
 	if err != nil {
 		log.Fatalln("Error connecting to database:", err)
 	}
-	defer db.Close()
 	log.Println("Connected to database")
 
 	genesisTick(db, *version)
 
 	initResourceTable(db)
 	initVillageTable(db)
+	initBuildingsTable(db)
 
 	app := &application{
 		players:          &database.PlayerModel{DB: db},
 		villages:         &database.VillageModel{DB: db},
 		villageSetup:     &database.VillageSetupModel{DB: db},
-		villageResources: &database.VillageResourcesModel{DB: db}}
+		villageResources: &database.VillageResourcesModel{DB: db},
+		calcResources:    &database.CalcResourcesModel{DB: db}}
 
 	s := gocron.NewScheduler(time.UTC)
 	s.StartAsync()
 
-	if _, err := s.Every(5).Seconds().Do(calcResources); err != nil {
+	if _, err := s.Every(10).Seconds().Do(app.calcResources.CalculateResources); err != nil {
 		log.Println("Error in the cron job", err)
 	}
 
 	app.runServer()
+	defer closeServer(db)
 }
 
-func genesisTick(db *sqlx.DB, version int) {
+func closeServer(db *sqlx.DB) {
 
-	const genesisInsert string = `INSERT OR IGNORE INTO genesis (genesis_tick, version) VALUES (?, ?);`
+	// Close the database connection
+	db.Close()
+	log.Println("Closing server")
+}
+
+func genesisTick(db *sqlx.DB, status int) {
+
+	const genesisInsert string = `INSERT OR IGNORE INTO genesis (genesis_tick, status) VALUES (?, ?);`
 	genesis := time.Now().Unix()
 	log.Println("Genesis tick:", genesis)
 
-	db.MustExec(genesisInsert, genesis, version)
+	db.MustExec(genesisInsert, genesis, status)
 
 }
 
