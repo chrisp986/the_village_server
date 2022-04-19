@@ -117,8 +117,8 @@ const insertVillageSetupInit string = `INSERT OR IGNORE INTO village_setup (vill
 
 const insertVillageResourcesInit string = `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, copper, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :copper, :water, :gold);`
 
-const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate, 
-	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
+// const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate,
+// 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
 
 func initDB() error {
 	db, err := sqlx.Open("sqlite3", db_file)
@@ -207,9 +207,9 @@ func initVillageTable(db *sqlx.DB) {
 		vs := models.VillageSetup{
 			VillageID:  v.VillageID,
 			PlayerID:   v.PlayerID,
-			Buildings:  database.SetBuildings(),
+			Buildings:  database.InitBuildingsString(db),
 			Status:     0,
-			LastUpdate: time.Now().Local().String(),
+			LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 		}
 
 		_, err = db.NamedExec(insertVillageSetupInit, &vs)
@@ -284,6 +284,37 @@ func villageTable() []models.Village {
 	return vil
 }
 
-func initPlayerResourcesTable(db *sqlx.DB) {
+func playerTable() []models.Player {
+
+	file := filepath.FromSlash("./internal/database/init/players.json")
+	bytes, err := ioutil.ReadFile(file)
+
+	if err != nil {
+		fmt.Println("Unable to load config file!", err)
+		return nil
+	}
+
+	var players []models.Player
+	err = json.Unmarshal(bytes, &players)
+
+	if err != nil {
+		fmt.Println("JSON decode error!", err)
+		return nil
+	}
+	return players
+}
+
+const insertPlayers string = `INSERT OR IGNORE INTO players (player_id, player_name, player_email, player_password, player_score, active, connected, created) VALUES (:player_id, :player_name, :player_email, :player_password, :player_score, :active, :connected, :created);`
+
+func initPlayerTable(db *sqlx.DB) {
+
+	players := playerTable()
+
+	for _, p := range players {
+		_, err := db.NamedExec(insertPlayers, &p)
+		if err != nil {
+			log.Fatalln("Error inserting player: ", err)
+		}
+	}
 
 }

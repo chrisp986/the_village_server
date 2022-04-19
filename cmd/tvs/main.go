@@ -52,6 +52,7 @@ func main() {
 
 	genesisTick(db, *version)
 
+	initPlayerTable(db)
 	initResourceTable(db)
 	initVillageTable(db)
 	initBuildingsTable(db)

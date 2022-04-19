@@ -173,5 +173,12 @@
         "quality": 5,
         "resource_id": 4,
         "production_rate": 55
+    },
+    {
+        "building_id": 25,
+        "name": "Fountain",
+        "quality": 6,
+        "resource_id": 4,
+        "production_rate": 144
     }
 ]

@@ -25,7 +25,10 @@ func (a *CalcResourcesModel) CalculateResources() error {
 		return err
 	}
 
-	fmt.Println("Active players:", playerIDs)
+	fmt.Print("Active players: ", len(playerIDs))
+	if len(playerIDs) > 0 {
+		fmt.Println("| Player IDs:", playerIDs)
+	}
 
 	resource, err := a.GetResourceCalcRates()
 	if err != nil {

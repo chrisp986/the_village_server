@@ -6,8 +6,8 @@ type Player struct {
 	PlayerEmail    string `json:"player_email" db:"player_email"`
 	PlayerPassword string `json:"player_password" db:"player_password"`
 	PlayerScore    uint64 `json:"player_score" db:"player_score"`
-	Active         bool   `json:"active" db:"active"`
-	Connected      bool   `json:"connected" db:"connected"`
+	Active         uint32 `json:"active" db:"active"`
+	Connected      uint32 `json:"connected" db:"connected"`
 	Created        string `json:"created" db:"created"`
 }
 
