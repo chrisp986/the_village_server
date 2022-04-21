@@ -59,11 +59,12 @@ CREATE TABLE IF NOT EXISTS village_resources (
   );
 
   CREATE TABLE IF NOT EXISTS buildings (
-	building_id INTEGER PRIMARY KEY,
+	building_id TEXT NOT NULL,
 	name TEXT NOT NULL,
 	quality INTEGER NOT NULL,
 	resource_id INTEGER NOT NULL,
-	production_rate INTEGER NOT NULL
+	production_rate INTEGER NOT NULL,
+	UNIQUE(building_id)
   );
 
 
@@ -197,6 +198,10 @@ func buildingsTable() []models.Buildings {
 func initVillageTable(db *sqlx.DB) {
 
 	vil := villageTable()
+	bID, err := database.GetBuildingsID(db)
+	if err != nil {
+		log.Println("Error getting buildings ID", err)
+	}
 
 	for _, v := range vil {
 		_, err := db.NamedExec(insertVillages, &v)
@@ -207,7 +212,7 @@ func initVillageTable(db *sqlx.DB) {
 		vs := models.VillageSetup{
 			VillageID:  v.VillageID,
 			PlayerID:   v.PlayerID,
-			Buildings:  database.InitBuildingsString(db),
+			Buildings:  database.InitBuildingsString(db, bID),
 			Status:     0,
 			LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 		}

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -93,57 +94,130 @@ func getBuildingsString(db *sqlx.DB) (string, error) {
 	return bs, err
 }
 
-func splitBuildingsString(bs string) []models.BuildingCount {
+func GetBuildingsID(db *sqlx.DB) ([]string, error) {
+
+	var bID []string
+	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
+
+	return bID, err
+}
+
+// func splitBuildingsString(bs string) []models.BuildingCount {
+
+// 	var bcs []models.BuildingCount
+// 	s := strings.Split(bs, ",")
+
+// 	for _, v := range s {
+// 		s1 := strings.Split(v, ")")
+// 		b := strings.Replace(s1[0], "(", "", -1)
+// 		if b == "" {
+// 			continue
+// 		}
+// 		b64, err := strconv.ParseUint(b, 10, 32)
+// 		if err != nil {
+// 			log.Fatal(err)
+
+// 		}
+// 		replacer := strings.NewReplacer("[", "", "]", "")
+// 		c := replacer.Replace(s1[1])
+// 		if c == "" {
+// 			continue
+// 		}
+// 		c64, err := strconv.ParseUint(c, 10, 32)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		bc := models.BuildingCount{
+// 			BuildingID: uint32(b64),
+// 			Count:      uint32(c64),
+// 		}
+// 		bcs = append(bcs, bc)
+
+// 	}
+
+// 	return bcs
+// }
+
+func splitBuildingsString(s string) []models.BuildingCount {
 
 	var bcs []models.BuildingCount
-	s := strings.Split(bs, ",")
 
-	for _, v := range s {
-		s1 := strings.Split(v, ")")
-		b := strings.Replace(s1[0], "(", "", -1)
-		if b == "" {
-			continue
-		}
-		b64, err := strconv.ParseUint(b, 10, 32)
-		if err != nil {
-			log.Fatal(err)
+	s1 := strings.Split(s, ",")
 
-		}
-		replacer := strings.NewReplacer("[", "", "]", "")
-		c := replacer.Replace(s1[1])
-		if c == "" {
-			continue
-		}
-		c64, err := strconv.ParseUint(c, 10, 32)
-		if err != nil {
-			log.Fatal(err)
-		}
-		bc := models.BuildingCount{
-			BuildingID: uint32(b64),
-			Count:      uint32(c64),
-		}
-		bcs = append(bcs, bc)
+	for _, v := range s1 {
+		if v != "" {
 
+			b := matchB(v)
+			if b == "" {
+				log.Println("Error: Building ID not in range")
+			}
+			c := matchC(v)
+			if c == 4294967295 {
+				log.Println("Error: Count not in range")
+			}
+
+			bcs = append(bcs, models.BuildingCount{
+				BuildingID: b,
+				Count:      c,
+			})
+		}
 	}
-
 	return bcs
 }
 
-func InitBuildingsString(db *sqlx.DB) string {
+func matchB(s string) string {
 
-	buildingsCount, err := getBuildingsCount(db)
-	if err != nil {
-		log.Println("Error while getting building count.", err)
-		return ""
+	i := strings.Index(s, "(")
+	if i >= 0 {
+		j := strings.Index(s, ")")
+		if j >= 0 {
+			b := s[i+1 : j]
+			return b
+		}
+	}
+	return ""
+}
+
+func matchC(s string) uint32 {
+
+	i := strings.Index(s, "[")
+	if i >= 0 {
+		j := strings.Index(s, "]")
+		if j >= 0 {
+			c := s[i+1 : j]
+			c64, err := strconv.ParseUint(c, 10, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return uint32(c64)
+		}
+	}
+	return 4294967295
+}
+
+func InitBuildingsString(db *sqlx.DB, bID []string) string {
+
+	var new string
+
+	for _, v := range bID {
+		new += fmt.Sprintf("(%s)[0],", v)
+
 	}
 
-	buildingsString, err := getBuildingsString(db)
-	if err != nil {
-		log.Println("Error while getting building string.", err)
-		return ""
-	}
+	return new
 
-	splitBuildingsString(buildingsString)
+	//TODO work on this to make it dynamic e.g. if a new building is added to the game, it will be added to the database
+
+	// buildingsString, err := getBuildingsString(db)
+	// if err != nil {
+	// 	if err == sql.ErrNoRows {
+	// 	}
+
+	// 	log.Println("Error while getting building string.", err)
+	// 	return ""
+	// }
+
+	// splitBuildingsString(buildingsString)
 
 	// bs := strings.Split(buildingsString, ",")
 
@@ -154,17 +228,42 @@ func InitBuildingsString(db *sqlx.DB) string {
 	// 	fmt.Println("Building string is not initialized.")
 	// }
 
-	// "0|0,1|0,2|0,3|0,4|0,5|0,6|0,7|0,8|0,9|0,10|0,11|0,12|0,13|0,14|0,15|0,16|0,17|0,18|0,19|0,20|0,21|0,22|0,23|0,24|0"
+	// buildingsCount, err := getBuildingsCount(db)
+	// if err != nil {
+	// 	log.Println("Error while getting building count.", err)
+	// 	return ""
+	// }
 
-	var new string
-	// var count int
-	// m.DB.Get(&count, "SELECT COUNT(*) FROM buildings")
+}
 
-	for i := 0; i < buildingsCount; i++ {
-		new += fmt.Sprintf("(%d)[0],", i)
+func VerifyBuildingsString(db *sqlx.DB) error {
+
+	buildingsString, err := getBuildingsString(db)
+	if err != nil {
+		log.Println("Error while getting building string.", err)
+		return err
 	}
 
-	return new
+	buildingsCount, err := getBuildingsCount(db)
+	if err != nil {
+		log.Println("Error while getting building count.", err)
+		return err
+	}
+
+	bs := strings.Split(buildingsString, ",")
+
+	if len(bs)-1 == buildingsCount {
+		return nil
+	} else {
+		updateBuildingsString(db, buildingsString)
+	}
+
+	return errors.New("Building string is not initialized.")
+}
+
+func updateBuildingsString(db *sqlx.DB, bs string) error {
+
+	return nil
 }
 
 // func (m *VillageSetupModel) updateBuildings(village_id uint32, building_id uint32, change uint32) {

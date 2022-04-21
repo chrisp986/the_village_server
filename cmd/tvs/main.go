@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/database"
@@ -54,8 +55,8 @@ func main() {
 
 	initPlayerTable(db)
 	initResourceTable(db)
-	initVillageTable(db)
 	initBuildingsTable(db)
+	initVillageTable(db)
 
 	app := &application{
 		players:          &database.PlayerModel{DB: db},
@@ -79,7 +80,11 @@ func closeServer(db *sqlx.DB) {
 
 	// Close the database connection
 	db.Close()
-	log.Println("Closing server")
+	log.Println("Closing server and delete database")
+	e := os.Remove("tv_server.db")
+	if e != nil {
+		log.Fatal(e)
+	}
 }
 
 func genesisTick(db *sqlx.DB, status int) {

@@ -51,7 +51,7 @@ type ResourceRates struct {
 }
 
 type Buildings struct {
-	BuildingID     uint32 `json:"building_id" db:"building_id"`
+	BuildingID     string `json:"building_id" db:"building_id"`
 	Name           string `json:"name" db:"name"`
 	Quality        uint32 `json:"quality" db:"quality"`
 	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
@@ -59,7 +59,7 @@ type Buildings struct {
 }
 
 type BuildingCount struct {
-	BuildingID uint32 `json:"building_id" db:"building_id"`
+	BuildingID string `json:"building_id" db:"building_id"`
 	Count      uint32 `json:"count" db:"count"`
 }
 
