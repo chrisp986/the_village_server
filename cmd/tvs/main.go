@@ -28,7 +28,6 @@ type application struct {
 		Insert(models.VillageResource) (uint32, error)
 	}
 	calcResources interface {
-		GetActivePlayers() ([]uint32, error)
 		CalculateResources() error
 	}
 }

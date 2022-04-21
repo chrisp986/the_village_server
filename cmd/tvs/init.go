@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS village_resources (
 	food INTEGER NOT NULL,
 	wood INTEGER NOT NULL,
 	stone INTEGER NOT NULL,
-	copper INTEGER NOT NULL,
+	metal INTEGER NOT NULL,
 	water INTEGER NOT NULL,
 	gold INTEGER NOT NULL,
 	UNIQUE(village_id)
@@ -116,7 +116,7 @@ const insertVillages string = `INSERT OR IGNORE INTO villages (village_id, playe
 
 const insertVillageSetupInit string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
 
-const insertVillageResourcesInit string = `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, copper, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :copper, :water, :gold);`
+const insertVillageResourcesInit string = `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, metal, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :metal, :water, :gold);`
 
 // const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate,
 // 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
@@ -198,7 +198,8 @@ func buildingsTable() []models.Buildings {
 func initVillageTable(db *sqlx.DB) {
 
 	vil := villageTable()
-	bID, err := database.GetBuildingsID(db)
+	bID, err := getBuildingsID(db)
+
 	if err != nil {
 		log.Println("Error getting buildings ID", err)
 	}
@@ -212,7 +213,7 @@ func initVillageTable(db *sqlx.DB) {
 		vs := models.VillageSetup{
 			VillageID:  v.VillageID,
 			PlayerID:   v.PlayerID,
-			Buildings:  database.InitBuildingsString(db, bID),
+			Buildings:  database.InitBuildingsString(bID),
 			Status:     0,
 			LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 		}
@@ -228,7 +229,7 @@ func initVillageTable(db *sqlx.DB) {
 			Food:      100,
 			Wood:      100,
 			Stone:     100,
-			Copper:    100,
+			Metal:     100,
 			Water:     100,
 			Gold:      20,
 		}
@@ -239,6 +240,14 @@ func initVillageTable(db *sqlx.DB) {
 		}
 
 	}
+}
+
+func getBuildingsID(db *sqlx.DB) ([]string, error) {
+
+	var bID []string
+	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
+
+	return bID, err
 }
 
 func resourcesTable() []models.Resources {

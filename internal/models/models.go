@@ -17,7 +17,7 @@ type VillageResource struct {
 	Food      uint32 `json:"food" db:"food"`
 	Wood      uint32 `json:"wood" db:"wood"`
 	Stone     uint32 `json:"stone" db:"stone"`
-	Copper    uint32 `json:"copper" db:"copper"`
+	Metal     uint32 `json:"metal" db:"metal"`
 	Water     uint32 `json:"water" db:"water"`
 	Gold      uint32 `json:"gold" db:"gold"`
 }
@@ -26,16 +26,16 @@ type Production struct {
 	HunterHut     uint64 `json:"hunter_hut" db:"hunter_hut"`
 	WoodcutterHut uint64 `json:"woodcutter_hut" db:"woodcutter_hut"`
 	Quarry        uint64 `json:"quarry" db:"quarry"`
-	CopperMine    uint64 `json:"copper_mine" db:"copper_mine"`
+	Mine          uint64 `json:"Mine" db:"Mine"`
 	Fountain      uint64 `json:"fountain" db:"fountain"`
 }
 
 type ResourceType struct {
-	Food   uint64 `json:"food" db:"food"`
-	Wood   uint64 `json:"wood" db:"wood"`
-	Stone  uint64 `json:"stone" db:"stone"`
-	Copper uint64 `json:"copper" db:"copper"`
-	Water  uint64 `json:"water" db:"water"`
+	Food  uint64 `json:"food" db:"food"`
+	Wood  uint64 `json:"wood" db:"wood"`
+	Stone uint64 `json:"stone" db:"stone"`
+	Metal uint64 `json:"metal" db:"metal"`
+	Water uint64 `json:"water" db:"water"`
 }
 
 type Resources struct {

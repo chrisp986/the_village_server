@@ -25,7 +25,7 @@ func (m *VillageResourcesModel) Insert(newPlayerResources models.VillageResource
 	// 	UNIQUE(village_id)
 	// 	);
 
-	stmt := `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, copper, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :copper, :water, :gold);`
+	stmt := `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, metal, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :metal, :water, :gold);`
 
 	result, err := m.DB.NamedExec(stmt, &newPlayerResources)
 	if err != nil {

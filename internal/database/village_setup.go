@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -36,12 +35,14 @@ func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32,
 
 func (m *VillageSetupModel) InsertWithIDCheck(village_id uint32, player_id uint32) (uint32, error) {
 
+	buildingID, err := m.getBuildingsID()
+
 	newVillageSetup := models.VillageSetup{
 		VillageID:  village_id,
 		PlayerID:   player_id,
-		Buildings:  "", //TODO fix this
+		Buildings:  InitBuildingsString(buildingID),
 		Status:     0,
-		LastUpdate: time.Now().Local().String(),
+		LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 	}
 
 	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
@@ -94,10 +95,10 @@ func getBuildingsString(db *sqlx.DB) (string, error) {
 	return bs, err
 }
 
-func GetBuildingsID(db *sqlx.DB) ([]string, error) {
+func (m *VillageSetupModel) getBuildingsID() ([]string, error) {
 
 	var bID []string
-	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
+	err := m.DB.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
 
 	return bID, err
 }
@@ -138,70 +139,12 @@ func GetBuildingsID(db *sqlx.DB) ([]string, error) {
 // 	return bcs
 // }
 
-func splitBuildingsString(s string) []models.BuildingCount {
-
-	var bcs []models.BuildingCount
-
-	s1 := strings.Split(s, ",")
-
-	for _, v := range s1 {
-		if v != "" {
-
-			b := matchB(v)
-			if b == "" {
-				log.Println("Error: Building ID not in range")
-			}
-			c := matchC(v)
-			if c == 4294967295 {
-				log.Println("Error: Count not in range")
-			}
-
-			bcs = append(bcs, models.BuildingCount{
-				BuildingID: b,
-				Count:      c,
-			})
-		}
-	}
-	return bcs
-}
-
-func matchB(s string) string {
-
-	i := strings.Index(s, "(")
-	if i >= 0 {
-		j := strings.Index(s, ")")
-		if j >= 0 {
-			b := s[i+1 : j]
-			return b
-		}
-	}
-	return ""
-}
-
-func matchC(s string) uint32 {
-
-	i := strings.Index(s, "[")
-	if i >= 0 {
-		j := strings.Index(s, "]")
-		if j >= 0 {
-			c := s[i+1 : j]
-			c64, err := strconv.ParseUint(c, 10, 32)
-			if err != nil {
-				log.Fatal(err)
-			}
-			return uint32(c64)
-		}
-	}
-	return 4294967295
-}
-
-func InitBuildingsString(db *sqlx.DB, bID []string) string {
+func InitBuildingsString(buildingID []string) string {
 
 	var new string
 
-	for _, v := range bID {
+	for _, v := range buildingID {
 		new += fmt.Sprintf("(%s)[0],", v)
-
 	}
 
 	return new

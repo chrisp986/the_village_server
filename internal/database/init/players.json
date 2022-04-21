@@ -1,11 +1,11 @@
 [
     {
-        "player_id": 0,
+        "player_id": 999,
         "player_name": "NPC - Günther",
         "player_email": "guenther@tvs-npc.com",
         "player_password": "guenther",
         "player_score": 0,
-        "active": 1,
+        "active": 0,
         "connected": 0,
         "created": "2020-01-01 00:00:00"
     }

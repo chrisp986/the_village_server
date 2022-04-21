@@ -97,7 +97,7 @@ func (a *application) postPlayer(c *gin.Context) {
 		Food:      100,
 		Wood:      100,
 		Stone:     100,
-		Copper:    100,
+		Metal:     100,
 		Water:     100,
 		Gold:      20,
 	})
