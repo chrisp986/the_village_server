@@ -64,6 +64,10 @@ CREATE TABLE IF NOT EXISTS village_resources (
 	quality INTEGER NOT NULL,
 	resource_id INTEGER NOT NULL,
 	production_rate INTEGER NOT NULL,
+	build_cost TEXT NOT NULL,
+	upgrade_cost TEXT NOT NULL,
+	build_time TEXT NOT NULL,
+	upgrade_time TEXT NOT NULL,
 	UNIQUE(building_id)
   );
 
@@ -82,6 +86,17 @@ CREATE TABLE IF NOT EXISTS village_setup (
 	status INTEGER NOT NULL,
 	last_update TEXT NOT NULL,
 	UNIQUE(village_id)
+	);
+
+
+CREATE TABLE IF NOT EXISTS building_queue (
+	building_id TEXT NOT NULL,
+	village_id INTEGER NOT NULL,
+	player_id INTEGER NOT NULL,
+	amount INTEGER NOT NULL,
+	status INTEGER NOT NULL,
+	start_time TEXT NOT NULL,
+	finish_time TEXT NOT NULL
 	);
   `
 
@@ -160,19 +175,49 @@ func initResourceTable(db *sqlx.DB) {
 	}
 }
 
-const insertBuildings string = `INSERT OR IGNORE INTO buildings (building_id, name, quality, resource_id, production_rate) VALUES (:building_id, :name, :quality, :resource_id, :production_rate);`
+const insertBuildings string = `INSERT OR IGNORE INTO buildings (building_id, name, quality, resource_id, production_rate, build_cost, upgrade_cost, build_time, upgrade_time) VALUES (:building_id, :name, :quality, :resource_id, :production_rate, :build_cost, :upgrade_cost, :build_time, :upgrade_time);`
 
 func initBuildingsTable(db *sqlx.DB) {
 
-	buildings := buildingsTable()
+	buildingsJSON := buildingsTable()
+
+	// log.Println(buildingsJSON)
+
+	var buildings []models.BuildingSQL
+
+	for _, b := range buildingsJSON {
+		buildings = append(buildings, models.BuildingSQL{
+			BuildingID:     b.BuildingID,
+			Name:           b.Name,
+			Quality:        b.Quality,
+			ResourceID:     b.ResourceID,
+			ProductionRate: b.ProductionRate,
+			BuildCost:      costToString(b.BuildCost),
+			UpgradeCost:    costToString(b.UpgradeCost),
+			BuildTime:      b.BuildTime,
+			UpgradeTime:    b.UpgradeTime,
+		})
+
+	}
 
 	for _, b := range buildings {
+
 		_, err := db.NamedExec(insertBuildings, &b)
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatalln("Error inserting building: ", err)
 		}
 
 	}
+}
+
+func costToString(bc []models.Cost) string {
+
+	var cost string
+	for _, v := range bc {
+		cost += fmt.Sprintf("(%d)[%d],", v.ResourceID, v.Amount)
+	}
+
+	return cost
 }
 
 func buildingsTable() []models.Buildings {

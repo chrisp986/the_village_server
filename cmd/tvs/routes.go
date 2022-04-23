@@ -14,6 +14,7 @@ func (a *application) routes(r *gin.Engine) {
 
 		//1. create new player and then create a new village that belongs to the player
 		v1.POST("/new_player", a.postPlayer)
-		// v1.POST("/calc_new_res", postCalculateNewResources)
+		v1.POST("/build", a.postConstructNewBuilding)
+
 	}
 }

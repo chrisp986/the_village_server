@@ -56,6 +56,27 @@ type Buildings struct {
 	Quality        uint32 `json:"quality" db:"quality"`
 	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
 	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
+	BuildCost      []Cost `json:"build_cost" db:"build_cost"`
+	UpgradeCost    []Cost `json:"upgrade_cost" db:"upgrade_cost"`
+	BuildTime      uint32 `json:"build_time" db:"build_time"`
+	UpgradeTime    uint32 `json:"upgrade_time" db:"upgrade_time"`
+}
+
+type Cost struct {
+	ResourceID uint32 `json:"resource_id" db:"resource_id"`
+	Amount     uint32 `json:"amount" db:"amount"`
+}
+
+type BuildingSQL struct {
+	BuildingID     string `json:"building_id" db:"building_id"`
+	Name           string `json:"name" db:"name"`
+	Quality        uint32 `json:"quality" db:"quality"`
+	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
+	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
+	BuildCost      string `json:"build_cost" db:"build_cost"`
+	UpgradeCost    string `json:"upgrade_cost" db:"upgrade_cost"`
+	BuildTime      uint32 `json:"build_time" db:"build_time"`
+	UpgradeTime    uint32 `json:"upgrade_time" db:"upgrade_time"`
 }
 
 type BuildingCount struct {
@@ -110,6 +131,16 @@ type VillageSetup struct {
 	Buildings  string `json:"buildings" db:"buildings"`
 	Status     uint32 `json:"status" db:"status"`
 	LastUpdate string `json:"last_update" db:"last_update"`
+}
+
+type BuildingQueue struct {
+	VillageID  uint32 `json:"village_id" db:"village_id"`
+	PlayerID   uint32 `json:"player_id" db:"player_id"`
+	BuildingID string `json:"building" db:"building"`
+	Amount     uint32 `json:"amount" db:"amount"`
+	Status     uint8  `json:"status" db:"status"`
+	StartTime  uint32 `json:"start_time" db:"start_time"`
+	FinishTime uint32 `json:"finish_time" db:"finish_time"`
 }
 
 // CREATE TABLE IF NOT EXISTS prod_buildings_cfg (

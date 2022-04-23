@@ -108,22 +108,43 @@ func (a *application) postPlayer(c *gin.Context) {
 	})
 }
 
-// func postCalculateNewResources(c *gin.Context) {
+func (a *application) postConstructNewBuilding(c *gin.Context) {
+	// this function is used to add a new building to a village
+	// Get the village_id and the player_id as json
+	// Add the new building to the building queue
+	// When the construction is complete, add the building to the village
+	//TODO: do this!
 
-// 	var numProductions models.Production
+	log.Println("postConstructNewBuilding")
 
-// 	if err := c.BindJSON(&numProductions); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	// "village_id": 10,
+	// "player_id": 1000,
+	// "building_id": "h1",
+	// "amount": 1,
+	// "status": 0,
+	// "start_time": "2020-01-01 00:00:00",
+	// "finish_time": "2020-01-01 00:00:00"
 
-// 	newResources := models.Resource{
-// 		Food:   numProductions.HunterHut * 2,
-// 		Wood:   numProductions.WoodcutterHut * 2,
-// 		Stone:  numProductions.Quarry * 2,
-// 		Copper: numProductions.CopperMine * 2,
-// 		Water:  numProductions.Fountain * 2,
-// 	}
+	var newBuilding models.BuildingQueue
 
-// 	c.IndentedJSON(http.StatusOK, newResources)
-// }
+	if err := c.BindJSON(&newBuilding); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "postConstructNewBuilding"})
+		return
+	}
+
+	switch newBuilding.Status {
+	case 1:
+		log.Println("Start the construction of a new building")
+		c.JSON(http.StatusOK, gin.H{"status": "Start the construction of a new building"})
+		return
+	case 2:
+		log.Println("Start upgrading a building")
+		c.JSON(http.StatusOK, gin.H{"status": "Start upgrading a building"})
+		return
+	default:
+		log.Println("Error: Wrong status for building; 1 - start construction of a new building, 2 - upgrade existing building")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error: Wrong status for building; 1 - start construction of a new building, 2 - upgrade existing building"})
+		return
+	}
+
+}
