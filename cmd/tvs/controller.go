@@ -115,8 +115,6 @@ func (a *application) postConstructNewBuilding(c *gin.Context) {
 	// When the construction is complete, add the building to the village
 	//TODO: do this!
 
-	log.Println("postConstructNewBuilding")
-
 	// "village_id": 10,
 	// "player_id": 1000,
 	// "building_id": "h1",
@@ -132,8 +130,20 @@ func (a *application) postConstructNewBuilding(c *gin.Context) {
 		return
 	}
 
+	// Status 1 = new building
+	// Status 2 = upgrade building
+
 	switch newBuilding.Status {
 	case 1:
+
+		err := a.buildingQueue.StartConstructionNewBuilding(newBuilding)
+		if err != nil {
+			log.Println("Error: ", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "buildingQueue.StartConstructionNewBuilding"})
+			return
+		}
+		// get needed resources for the new building
+		// check if the player has enough resources to build the building
 		log.Println("Start the construction of a new building")
 		c.JSON(http.StatusOK, gin.H{"status": "Start the construction of a new building"})
 		return

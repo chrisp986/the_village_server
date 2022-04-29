@@ -136,7 +136,7 @@ type VillageSetup struct {
 type BuildingQueue struct {
 	VillageID  uint32 `json:"village_id" db:"village_id"`
 	PlayerID   uint32 `json:"player_id" db:"player_id"`
-	BuildingID string `json:"building" db:"building"`
+	BuildingID string `json:"building_id" db:"building_id"`
 	Amount     uint32 `json:"amount" db:"amount"`
 	Status     uint8  `json:"status" db:"status"`
 	StartTime  uint32 `json:"start_time" db:"start_time"`

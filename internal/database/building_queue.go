@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -39,4 +41,31 @@ func (m *BuildingQueueModel) Insert(newBuilding models.BuildingQueue) (uint32, e
 	}
 
 	return uint32(id), nil
+}
+
+func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.BuildingQueue) error {
+
+	building, err := m.getBuildingData(buildingQueue.BuildingID)
+	if err != nil {
+		log.Println("Error getting building data: ", err)
+		return err
+	}
+	log.Println("Building: ", building)
+	return err
+}
+
+func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.BuildingSQL, error) {
+
+	var building models.BuildingSQL
+
+	log.Println("Building ID: ", buildingID)
+
+	stmt := fmt.Sprintf("SELECT * FROM buildings WHERE building_id='%s';", buildingID)
+
+	err := m.DB.Get(&building, stmt)
+	if err != nil {
+		return building, err
+	}
+
+	return building, err
 }

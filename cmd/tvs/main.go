@@ -30,6 +30,10 @@ type application struct {
 	calcResources interface {
 		CalculateResources() error
 	}
+	buildingQueue interface {
+		Insert(models.BuildingQueue) (uint32, error)
+		StartConstructionNewBuilding(models.BuildingQueue) error
+	}
 }
 
 func main() {
@@ -62,7 +66,8 @@ func main() {
 		villages:         &database.VillageModel{DB: db},
 		villageSetup:     &database.VillageSetupModel{DB: db},
 		villageResources: &database.VillageResourcesModel{DB: db},
-		calcResources:    &database.CalcResourcesModel{DB: db}}
+		calcResources:    &database.CalcResourcesModel{DB: db},
+		buildingQueue:    &database.BuildingQueueModel{DB: db}}
 
 	s := gocron.NewScheduler(time.UTC)
 	s.StartAsync()
