@@ -51,14 +51,14 @@ func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.B
 		return err
 	}
 	log.Println("Building: ", building)
+
+	//check if the village has sufficient resources
 	return err
 }
 
 func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.BuildingSQL, error) {
 
 	var building models.BuildingSQL
-
-	log.Println("Building ID: ", buildingID)
 
 	stmt := fmt.Sprintf("SELECT * FROM buildings WHERE building_id='%s';", buildingID)
 
@@ -68,4 +68,10 @@ func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.Building
 	}
 
 	return building, err
+}
+
+func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
+
+	//check if the village has sufficient resources
+	return true, nil
 }
