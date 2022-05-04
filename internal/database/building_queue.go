@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -53,6 +55,13 @@ func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.B
 	log.Println("Building: ", building)
 
 	//check if the village has sufficient resources
+
+	sufficientResources, err := m.checkIfSufficientResources(buildingQueue, building)
+	if err != nil {
+		log.Println("Error checking if sufficient resources: ", err)
+		return err
+	}
+	fmt.Println(sufficientResources)
 	return err
 }
 
@@ -73,5 +82,71 @@ func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.Building
 func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
 
 	//check if the village has sufficient resources
+
+	bcs := splitCostString(building.BuildCost)
+
+	for _, bc := range bcs {
+		fmt.Println("ResourceID: ", bc.ResourceID)
+		fmt.Println("Amount: ", bc.Amount)
+		// get the amount of the resource
+	}
 	return true, nil
+}
+
+func splitCostString(s string) []models.BuildingCost {
+
+	var bcs []models.BuildingCost
+
+	s1 := strings.Split(s, ",")
+
+	for _, v := range s1 {
+		if v != "" {
+
+			res := matchResource(v)
+			if res == 4294967295 {
+				log.Println("Error: Resource not in range")
+			}
+			amount := matchAmount(v)
+			if amount == 4294967295 {
+				log.Println("Error: Amount not in range")
+			}
+
+			bcs = append(bcs, models.BuildingCost{ResourceID: res, Amount: amount})
+		}
+	}
+	return bcs
+}
+
+func matchResource(s string) uint32 {
+
+	i := strings.Index(s, "(")
+	if i >= 0 {
+		j := strings.Index(s, ")")
+		if j >= 0 {
+			c := s[i+1 : j]
+			c64, err := strconv.ParseUint(c, 10, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return uint32(c64)
+		}
+	}
+	return 4294967295
+}
+
+func matchAmount(s string) uint32 {
+
+	i := strings.Index(s, "[")
+	if i >= 0 {
+		j := strings.Index(s, "]")
+		if j >= 0 {
+			c := s[i+1 : j]
+			c64, err := strconv.ParseUint(c, 10, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return uint32(c64)
+		}
+	}
+	return 4294967295
 }

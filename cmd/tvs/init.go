@@ -210,7 +210,7 @@ func initBuildingsTable(db *sqlx.DB) {
 	}
 }
 
-func costToString(bc []models.Cost) string {
+func costToString(bc []models.BuildingCost) string {
 
 	var cost string
 	for _, v := range bc {

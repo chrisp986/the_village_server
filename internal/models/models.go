@@ -51,18 +51,18 @@ type ResourceRates struct {
 }
 
 type Buildings struct {
-	BuildingID     string `json:"building_id" db:"building_id"`
-	Name           string `json:"name" db:"name"`
-	Quality        uint32 `json:"quality" db:"quality"`
-	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
-	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
-	BuildCost      []Cost `json:"build_cost" db:"build_cost"`
-	UpgradeCost    []Cost `json:"upgrade_cost" db:"upgrade_cost"`
-	BuildTime      uint32 `json:"build_time" db:"build_time"`
-	UpgradeTime    uint32 `json:"upgrade_time" db:"upgrade_time"`
+	BuildingID     string         `json:"building_id" db:"building_id"`
+	Name           string         `json:"name" db:"name"`
+	Quality        uint32         `json:"quality" db:"quality"`
+	ResourceID     uint32         `json:"resource_id" db:"resource_id"`
+	ProductionRate uint32         `json:"production_rate" db:"production_rate"`
+	BuildCost      []BuildingCost `json:"build_cost" db:"build_cost"`
+	UpgradeCost    []BuildingCost `json:"upgrade_cost" db:"upgrade_cost"`
+	BuildTime      uint32         `json:"build_time" db:"build_time"`
+	UpgradeTime    uint32         `json:"upgrade_time" db:"upgrade_time"`
 }
 
-type Cost struct {
+type BuildingCost struct {
 	ResourceID uint32 `json:"resource_id" db:"resource_id"`
 	Amount     uint32 `json:"amount" db:"amount"`
 }
