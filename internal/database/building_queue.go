@@ -56,12 +56,13 @@ func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.B
 
 	//check if the village has sufficient resources
 
-	sufficientResources, err := m.checkIfSufficientResources(buildingQueue, building)
+	sufficientResources, resourceNames, err := m.checkIfSufficientResources(buildingQueue, building)
 	if err != nil {
 		log.Println("Error checking if sufficient resources: ", err)
 		return err
 	}
 	fmt.Println(sufficientResources)
+	fmt.Println(resourceNames)
 	return err
 }
 
@@ -79,18 +80,60 @@ func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.Building
 	return building, err
 }
 
-func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
+func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, []string, error) {
 
 	//check if the village has sufficient resources
 
+	var resourceName []string
 	bcs := splitCostString(building.BuildCost)
 
 	for _, bc := range bcs {
 		fmt.Println("ResourceID: ", bc.ResourceID)
 		fmt.Println("Amount: ", bc.Amount)
 		// get the amount of the resource
+		// get the resourceName
+		resName, err := m.getResourceName(bc.ResourceID)
+		if err != nil {
+			log.Println("Error getting resource name: ", err)
+			return false, nil, err
+		}
+
+		// check if the village has enough resources
+		resourceName = append(resourceName, resName)
 	}
-	return true, nil
+	return true, resourceName, nil
+}
+
+func (m *BuildingQueueModel) checkResourceFromVillage(resourceName string, villageID uint32) (bool, error) {
+
+	// returns 1 if the village has enough resources and 0 if no sufficient resources
+
+	var resAmount uint8
+	stmt := fmt.Sprintf("SELECT CASE WHEN %s >= 20 THEN '1' ELSE '0' END FROM village_resources WHERE village_id=%d;", resourceName, villageID)
+
+	err := m.DB.Get(&resAmount, stmt)
+	if err != nil {
+		log.Println("Error getting resource amount: ", err)
+		return false, err
+	}
+
+	if resAmount == 1 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (m *BuildingQueueModel) getResourceName(resourceID uint32) (string, error) {
+
+	var resourceName string
+	stmt := fmt.Sprintf("SELECT resource FROM resources WHERE resource_id='%d';", resourceID)
+
+	err := m.DB.Get(&resourceName, stmt)
+	if err != nil {
+		return "", err
+	}
+	return resourceName, nil
 }
 
 func splitCostString(s string) []models.BuildingCost {
