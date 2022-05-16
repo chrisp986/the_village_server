@@ -103,42 +103,6 @@ func (m *VillageSetupModel) getBuildingsID() ([]string, error) {
 	return bID, err
 }
 
-// func splitBuildingsString(bs string) []models.BuildingCount {
-
-// 	var bcs []models.BuildingCount
-// 	s := strings.Split(bs, ",")
-
-// 	for _, v := range s {
-// 		s1 := strings.Split(v, ")")
-// 		b := strings.Replace(s1[0], "(", "", -1)
-// 		if b == "" {
-// 			continue
-// 		}
-// 		b64, err := strconv.ParseUint(b, 10, 32)
-// 		if err != nil {
-// 			log.Fatal(err)
-
-// 		}
-// 		replacer := strings.NewReplacer("[", "", "]", "")
-// 		c := replacer.Replace(s1[1])
-// 		if c == "" {
-// 			continue
-// 		}
-// 		c64, err := strconv.ParseUint(c, 10, 32)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		bc := models.BuildingCount{
-// 			BuildingID: uint32(b64),
-// 			Count:      uint32(c64),
-// 		}
-// 		bcs = append(bcs, bc)
-
-// 	}
-
-// 	return bcs
-// }
-
 func InitBuildingsString(buildingID []string) string {
 
 	var new string
@@ -198,16 +162,26 @@ func VerifyBuildingsString(db *sqlx.DB) error {
 	if len(bs)-1 == buildingsCount {
 		return nil
 	} else {
-		updateBuildingsString(db, buildingsString)
+		// updateBuildingsString(db, buildingsString)
 	}
 
 	return errors.New("Building string is not initialized.")
 }
 
-func updateBuildingsString(db *sqlx.DB, bs string) error {
+func (m *VillageSetupModel) getBuildings(village_id uint32) (models.BuildingCount, error) {
 
-	return nil
+	var buildingCount models.BuildingCount
+	stmt := fmt.Sprintf(`SELECT buildings FROM village_setup WHERE village_id = %d;`, village_id)
+
+	err := m.DB.Get(&buildingCount, stmt)
+
+	return buildingCount, err
 }
+
+// func (m *VillageSetupModel) updateBuildingsString(bs string) (bool, error) {
+
+// 	return true, err
+// }
 
 // func (m *VillageSetupModel) updateBuildings(village_id uint32, building_id uint32, change uint32) {
 

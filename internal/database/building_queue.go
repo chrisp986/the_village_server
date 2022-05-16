@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strconv"
@@ -45,6 +46,7 @@ func (m *BuildingQueueModel) Insert(newBuilding models.BuildingQueue) (uint32, e
 	return uint32(id), nil
 }
 
+// Main function
 func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.BuildingQueue) error {
 
 	building, err := m.getBuildingData(buildingQueue.BuildingID)
@@ -52,18 +54,102 @@ func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.B
 		log.Println("Error getting building data: ", err)
 		return err
 	}
-	log.Println("Building: ", building)
 
-	//check if the village has sufficient resources
-
-	sufficientResources, resourceNames, err := m.checkIfSufficientResources(buildingQueue, building)
+	resCheck, err := m.checkIfSufficientResources(buildingQueue, building)
 	if err != nil {
 		log.Println("Error checking if sufficient resources: ", err)
 		return err
 	}
-	fmt.Println(sufficientResources)
-	fmt.Println(resourceNames)
+
+	if resCheck {
+		m.insertToBuildingQueue(buildingQueue, building)
+	}
 	return err
+}
+
+//
+//TODO Create new function to keep track of the progress of the building queue
+//
+func (m *BuildingQueueModel) UpdateBuildingQueue() (models.BuildingRowAndVillage, error) {
+
+	// set status of the building in the queue to start = 10 or 20
+
+	err := m.setBuildingToStart()
+	if err != nil {
+		log.Println("Error setting building to start 'UpdateBuildingQueue': ", err)
+		return models.BuildingRowAndVillage{}, err
+	}
+
+	// check if the finish_time is reached
+	// if reached, get the rowid and village_id to add the building to the village (update the village_setup table)
+
+	rowAndVillage, filled, err := m.getRowAndVillageIDs()
+	if err != nil {
+		log.Println("Error getting row and village IDs 'UpdateBuildingQueue': ", err)
+		return models.BuildingRowAndVillage{}, err
+	}
+
+	if filled {
+		fmt.Println("Filled:", rowAndVillage)
+		// if building string is updated set the status to done = 100(built) or 200(upgraded)
+		err = m.setBuildingToDone()
+		if err != nil {
+			log.Println("Error setting building to done 'UpdateBuildingQueue': ", err)
+			return models.BuildingRowAndVillage{}, err
+		}
+	}
+
+	return rowAndVillage, nil
+}
+
+func (m *BuildingQueueModel) getRowAndVillageIDs() (models.BuildingRowAndVillage, bool, error) {
+
+	var data models.BuildingRowAndVillage
+	var status10 uint8 = 10
+	var status20 uint8 = 20
+
+	err := m.DB.Get(&data, "SELECT rowid, village_id FROM building_queue WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time LIMIT 1;", status10, status20)
+
+	if err == sql.ErrNoRows {
+		err = nil
+	}
+
+	if (models.BuildingRowAndVillage{}) == data {
+		return data, false, err
+	}
+
+	return data, true, err
+}
+
+func (m *BuildingQueueModel) setBuildingToDone() error {
+
+	fmt.Println("setBuildingToDone")
+
+	var status10 uint8 = 10
+	var status20 uint8 = 20
+
+	stmt := "UPDATE building_queue SET status = status * 10 WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;"
+
+	_, err := m.DB.Exec(stmt, status10, status20)
+	if err != nil {
+		log.Println("Error setting building to done 'setBuildingToDone': ", err)
+		return err
+	}
+
+	return nil
+}
+
+func (m *BuildingQueueModel) setBuildingToStart() error {
+
+	const stmt string = "UPDATE building_queue SET status = status * 10 WHERE (status = 1 OR status = 2) AND start_time <= strftime('%s', 'now');"
+
+	_, err := m.DB.Exec(stmt)
+	if err != nil {
+		log.Println("Error setting building to start 'setBuildingToStart': ", err)
+		return err
+	}
+
+	return nil
 }
 
 func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.BuildingSQL, error) {
@@ -80,44 +166,97 @@ func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.Building
 	return building, err
 }
 
-func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, []string, error) {
+func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
 
 	//check if the village has sufficient resources
 
-	var resourceName []string
 	bcs := splitCostString(building.BuildCost)
 
 	for _, bc := range bcs {
-		fmt.Println("ResourceID: ", bc.ResourceID)
-		fmt.Println("Amount: ", bc.Amount)
+
 		// get the amount of the resource
 		// get the resourceName
 		resName, err := m.getResourceName(bc.ResourceID)
 		if err != nil {
 			log.Println("Error getting resource name: ", err)
-			return false, nil, err
+			return false, err
 		}
 
-		// check if the village has enough resources
-		resourceName = append(resourceName, resName)
+		resCheck, err := m.checkResourceFromVillage(resName, bc.Amount, buildingQueue.VillageID)
+		if err != nil {
+			log.Println("Error checking resource from village: ", err)
+			return false, err
+		}
+
+		if resCheck {
+			resUpdated, err := m.updateVillageResources(resName, bc.Amount, buildingQueue.VillageID)
+			if err != nil {
+				return false, err
+			}
+			if resUpdated {
+				log.Printf("Updated village resources! ResourceName: %s, Cost: %d, VillageID: %d", resName, bc.Amount, buildingQueue.VillageID)
+
+			}
+		}
 	}
-	return true, resourceName, nil
+	return true, nil
 }
 
-func (m *BuildingQueueModel) checkResourceFromVillage(resourceName string, villageID uint32) (bool, error) {
+func (m *BuildingQueueModel) insertToBuildingQueue(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
+
+	//TODO insert to building queue
+	//buildingID, villageID, playerID, amount, status, startTime, finishTime
+
+	const insertBuildingQueue string = `INSERT INTO building_queue (building_id, village_id, player_id, amount, status, start_time, finish_time) VALUES (:building_id, :village_id, :player_id, :amount, :status, :start_time, :finish_time)`
+
+	buildingQueue.StartTime = uint32(time.Now().Unix())
+	buildingQueue.FinishTime = buildingQueue.StartTime + buildingQueue.Amount*building.BuildTime
+
+	tx := m.DB.MustBegin()
+	_, err := tx.NamedExec(insertBuildingQueue, &buildingQueue)
+	switch err {
+	case nil:
+		tx.Commit()
+		log.Printf("Inserted building queue! BuildingID: %s, VillageID: %d, PlayerID: %d, Amount: %d, Status: %d, StartTime: %d, FinishTime: %d", buildingQueue.BuildingID, buildingQueue.VillageID, buildingQueue.PlayerID, buildingQueue.Amount, buildingQueue.Status, buildingQueue.StartTime, buildingQueue.FinishTime)
+		return true, err
+	default:
+		log.Printf("Error inserting to building queue: %s, BuildingID: %s, VillageID: %d, PlayerID: %d, Amount: %d, Status: %d, StartTime: %d, FinishTime: %d", err, buildingQueue.BuildingID, buildingQueue.VillageID, buildingQueue.PlayerID, buildingQueue.Amount, buildingQueue.Status, buildingQueue.StartTime, buildingQueue.FinishTime)
+		tx.Rollback()
+		return false, err
+	}
+}
+
+func (m *BuildingQueueModel) updateVillageResources(resName string, resCost uint32, villageID uint32) (bool, error) {
+
+	stmt := fmt.Sprintf("UPDATE village_resources SET %s = %s - %d WHERE village_id=%d;", resName, resName, resCost, villageID)
+
+	tx := m.DB.MustBegin()
+	_, err := tx.Exec(stmt)
+	switch err {
+	case nil:
+		tx.Commit()
+		return true, err
+	default:
+		log.Printf("Error! Rollback updating village resources: %s - resName: %s, resCost: %d, villageID: %d", err, resName, resCost, villageID)
+		tx.Rollback()
+		return false, err
+	}
+}
+
+func (m *BuildingQueueModel) checkResourceFromVillage(resourceName string, resCost uint32, villageID uint32) (bool, error) {
 
 	// returns 1 if the village has enough resources and 0 if no sufficient resources
 
-	var resAmount uint8
-	stmt := fmt.Sprintf("SELECT CASE WHEN %s >= 20 THEN '1' ELSE '0' END FROM village_resources WHERE village_id=%d;", resourceName, villageID)
+	var resCheck uint8
+	stmt := fmt.Sprintf("SELECT CASE WHEN %s >= %d THEN '1' ELSE '0' END FROM village_resources WHERE village_id=%d;", resourceName, resCost, villageID)
 
-	err := m.DB.Get(&resAmount, stmt)
+	err := m.DB.Get(&resCheck, stmt)
 	if err != nil {
 		log.Println("Error getting resource amount: ", err)
 		return false, err
 	}
 
-	if resAmount == 1 {
+	if resCheck == 1 {
 		return true, nil
 	}
 

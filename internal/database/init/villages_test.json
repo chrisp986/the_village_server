@@ -1,0 +1,72 @@
+[
+    {
+        "village_id": 0,
+        "player_id": 999,
+        "village_name": "village_0",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 1,
+        "player_id": 999,
+        "village_name": "village_1",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 2,
+        "player_id": 999,
+        "village_name": "village_2",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 3,
+        "player_id": 999,
+        "village_name": "village_3",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 4,
+        "player_id": 999,
+        "village_name": "village_4",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 5,
+        "player_id": 999,
+        "village_name": "village_5",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 6,
+        "player_id": 999,
+        "village_name": "village_6",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 7,
+        "player_id": 999,
+        "village_name": "village_7",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 8,
+        "player_id": 999,
+        "village_name": "village_8",
+        "village_size": 100,
+        "village_status": 0
+    },
+    {
+        "village_id": 9,
+        "player_id": 999,
+        "village_name": "village_9",
+        "village_size": 100,
+        "village_status": 0
+    }
+]

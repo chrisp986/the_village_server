@@ -33,6 +33,7 @@ type application struct {
 	buildingQueue interface {
 		Insert(models.BuildingQueue) (uint32, error)
 		StartConstructionNewBuilding(models.BuildingQueue) error
+		UpdateBuildingQueue() (models.BuildingRowAndVillage, error)
 	}
 }
 
@@ -73,7 +74,17 @@ func main() {
 	s.StartAsync()
 
 	if _, err := s.Every(10).Seconds().Do(app.calcResources.CalculateResources); err != nil {
-		log.Println("Error in the cron job", err)
+		log.Println("Error in the cron job app.calcResources.CalculateResources", err)
+	}
+
+	if _, err := s.Every(200).Milliseconds().Do(func() {
+		_, err := app.buildingQueue.UpdateBuildingQueue()
+		if err != nil {
+			log.Println("Error in the cron job app.buildingQueue.UpdateBuildingQueue", err)
+		}
+
+	}); err != nil {
+		log.Println("Error in the cron job app.buildingQueue.UpdateBuildingQueue", err)
 	}
 
 	app.runServer()
