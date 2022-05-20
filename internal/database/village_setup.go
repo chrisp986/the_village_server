@@ -1,10 +1,8 @@
 package database
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -87,14 +85,6 @@ func getBuildingsCount(db *sqlx.DB) (int, error) {
 	return bc, err
 }
 
-func getBuildingsString(db *sqlx.DB) (string, error) {
-
-	var bs string
-	err := db.Get(&bs, "SELECT buildings FROM village_setup LIMIT 1;")
-
-	return bs, err
-}
-
 func (m *VillageSetupModel) getBuildingsID() ([]string, error) {
 
 	var bID []string
@@ -108,7 +98,7 @@ func InitBuildingsString(buildingID []string) string {
 	var new string
 
 	for _, v := range buildingID {
-		new += fmt.Sprintf("(%s)[0],", v)
+		new += fmt.Sprintf("%s=0,", v)
 	}
 
 	return new
@@ -143,30 +133,56 @@ func InitBuildingsString(buildingID []string) string {
 
 }
 
-func VerifyBuildingsString(db *sqlx.DB) error {
+func (m *VillageSetupModel) GetBuildingCount(villageID uint32) (string, error) {
 
-	buildingsString, err := getBuildingsString(db)
-	if err != nil {
-		log.Println("Error while getting building string.", err)
-		return err
-	}
+	var bString string
+	err := m.DB.Get(&bString, "SELECT buildings FROM village_setup WHERE village_id = ?;", villageID)
 
-	buildingsCount, err := getBuildingsCount(db)
-	if err != nil {
-		log.Println("Error while getting building count.", err)
-		return err
-	}
-
-	bs := strings.Split(buildingsString, ",")
-
-	if len(bs)-1 == buildingsCount {
-		return nil
-	} else {
-		// updateBuildingsString(db, buildingsString)
-	}
-
-	return errors.New("Building string is not initialized.")
+	return bString, err
 }
+
+func (m *VillageSetupModel) UpdateBuildingString(bString string, brv models.BuildingRowAndVillage) error {
+
+	bcs := SplitBuildingsString(bString)
+
+	for _, v := range bcs {
+		// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+		if v.BuildingID == brv.BuildingID {
+			fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+		}
+
+	}
+	return nil
+}
+
+func addCountToBuilding() {
+
+}
+
+// func VerifyBuildingsString(db *sqlx.DB) error {
+
+// 	buildingsString, err := getBuildingsString(db)
+// 	if err != nil {
+// 		log.Println("Error while getting building string.", err)
+// 		return err
+// 	}
+
+// 	buildingsCount, err := getBuildingsCount(db)
+// 	if err != nil {
+// 		log.Println("Error while getting building count.", err)
+// 		return err
+// 	}
+
+// 	bs := strings.Split(buildingsString, ",")
+
+// 	if len(bs)-1 == buildingsCount {
+// 		return nil
+// 	} else {
+// 		// updateBuildingsString(db, buildingsString)
+// 	}
+
+// 	return errors.New("Building string is not initialized.")
+// }
 
 func (m *VillageSetupModel) getBuildings(village_id uint32) (models.BuildingCount, error) {
 

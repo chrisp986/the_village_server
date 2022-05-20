@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -23,6 +24,8 @@ type application struct {
 	villageSetup interface {
 		Insert(models.VillageSetup) (uint32, error)
 		InsertWithIDCheck(uint32, uint32) (uint32, error)
+		GetBuildingCount(uint32) (string, error)
+		UpdateBuildingString(string, models.BuildingRowAndVillage) error
 	}
 	villageResources interface {
 		Insert(models.VillageResource) (uint32, error)
@@ -33,7 +36,7 @@ type application struct {
 	buildingQueue interface {
 		Insert(models.BuildingQueue) (uint32, error)
 		StartConstructionNewBuilding(models.BuildingQueue) error
-		UpdateBuildingQueue() (models.BuildingRowAndVillage, error)
+		UpdateBuildingQueue() ([]models.BuildingRowAndVillage, error)
 	}
 }
 
@@ -77,10 +80,21 @@ func main() {
 		log.Println("Error in the cron job app.calcResources.CalculateResources", err)
 	}
 
-	if _, err := s.Every(200).Milliseconds().Do(func() {
-		_, err := app.buildingQueue.UpdateBuildingQueue()
+	if _, err := s.Every(1).Second().Do(func() {
+		rowAndVillage, err := app.buildingQueue.UpdateBuildingQueue()
 		if err != nil {
 			log.Println("Error in the cron job app.buildingQueue.UpdateBuildingQueue", err)
+		}
+
+		if len(rowAndVillage) > 0 {
+			fmt.Println("RowAndVillage: ", rowAndVillage)
+			for _, v := range rowAndVillage {
+				bString, err := app.villageSetup.GetBuildingCount(v.VillageID)
+				if err != nil {
+					log.Println("Error in the cron job app.villageSetup.GetBuildingCount", err)
+				}
+				app.villageSetup.UpdateBuildingString(bString, v)
+			}
 		}
 
 	}); err != nil {

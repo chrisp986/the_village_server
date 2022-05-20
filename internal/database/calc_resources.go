@@ -15,7 +15,6 @@ type CalcResourcesModel struct {
 }
 
 func (a *CalcResourcesModel) CalculateResources() error {
-	log.Println("Calculating resources...")
 
 	// Ablauf:
 	// 1. Get all active player ids
@@ -30,7 +29,8 @@ func (a *CalcResourcesModel) CalculateResources() error {
 	playerIDs := a.getActivePlayers()
 
 	if len(playerIDs) > 0 {
-		log.Println("Active players: ", len(playerIDs), " | Player IDs:", playerIDs)
+		log.Println("Active players:", len(playerIDs))
+
 	}
 
 	for _, pID := range playerIDs {
@@ -39,7 +39,8 @@ func (a *CalcResourcesModel) CalculateResources() error {
 		for _, v := range villages {
 
 			buildingString := a.getBuildingString(v.VillageID, v.PlayerID)
-			bcs := splitBuildingsString(buildingString)
+			bcs := splitString(buildingString)
+
 			for _, b := range bcs {
 				if b.Count > 0 {
 
@@ -224,7 +225,33 @@ func (a *CalcResourcesModel) GetResourceCalcRates() ([]models.Resources, error) 
 	return res, nil
 }
 
-func splitBuildingsString(s string) []models.BuildingCount {
+func splitString(s string) []models.BuildingCount {
+
+	var bcs []models.BuildingCount
+
+	s1 := strings.Split(s, ",")
+
+	for _, v := range s1[:len(s1)-1] {
+		s2 := strings.Split(v, "=")
+		b := s2[0]
+		c := s2[1]
+
+		c64, err := strconv.ParseUint(c, 10, 32)
+		if err != nil {
+			log.Println(err)
+		}
+
+		bcs = append(bcs, models.BuildingCount{
+			BuildingID: b,
+			Count:      uint32(c64),
+		})
+
+	}
+
+	return bcs
+}
+
+func SplitBuildingsString(s string) []models.BuildingCount {
 
 	var bcs []models.BuildingCount
 

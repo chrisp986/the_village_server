@@ -16,6 +16,9 @@ type BuildingQueueModel struct {
 	DB *sqlx.DB
 }
 
+const status10 uint8 = 10
+const status20 uint8 = 20
+
 // CREATE TABLE IF NOT EXISTS building_queue (
 // 	building_id TEXT NOT NULL,
 // 	village_id INTEGER NOT NULL,
@@ -70,63 +73,44 @@ func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.B
 //
 //TODO Create new function to keep track of the progress of the building queue
 //
-func (m *BuildingQueueModel) UpdateBuildingQueue() (models.BuildingRowAndVillage, error) {
+func (m *BuildingQueueModel) UpdateBuildingQueue() ([]models.BuildingRowAndVillage, error) {
 
 	// set status of the building in the queue to start = 10 or 20
 
 	err := m.setBuildingToStart()
 	if err != nil {
 		log.Println("Error setting building to start 'UpdateBuildingQueue': ", err)
-		return models.BuildingRowAndVillage{}, err
+		return nil, err
 	}
 
 	// check if the finish_time is reached
 	// if reached, get the rowid and village_id to add the building to the village (update the village_setup table)
 
-	rowAndVillage, filled, err := m.getRowAndVillageIDs()
+	rowAndVillage, err := m.getRowAndVillageIDs()
 	if err != nil {
 		log.Println("Error getting row and village IDs 'UpdateBuildingQueue': ", err)
-		return models.BuildingRowAndVillage{}, err
+		return nil, err
 	}
 
-	if filled {
-		fmt.Println("Filled:", rowAndVillage)
-		// if building string is updated set the status to done = 100(built) or 200(upgraded)
-		err = m.setBuildingToDone()
-		if err != nil {
-			log.Println("Error setting building to done 'UpdateBuildingQueue': ", err)
-			return models.BuildingRowAndVillage{}, err
-		}
-	}
-
-	return rowAndVillage, nil
+	return rowAndVillage, err
 }
 
-func (m *BuildingQueueModel) getRowAndVillageIDs() (models.BuildingRowAndVillage, bool, error) {
+func (m *BuildingQueueModel) getRowAndVillageIDs() ([]models.BuildingRowAndVillage, error) {
 
-	var data models.BuildingRowAndVillage
-	var status10 uint8 = 10
-	var status20 uint8 = 20
+	var data []models.BuildingRowAndVillage
 
-	err := m.DB.Get(&data, "SELECT rowid, village_id FROM building_queue WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time LIMIT 1;", status10, status20)
+	err := m.DB.Select(&data, "SELECT rowid, building_id, village_id FROM building_queue WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;", status10, status20)
 
 	if err == sql.ErrNoRows {
 		err = nil
 	}
 
-	if (models.BuildingRowAndVillage{}) == data {
-		return data, false, err
-	}
-
-	return data, true, err
+	return data, err
 }
 
 func (m *BuildingQueueModel) setBuildingToDone() error {
 
 	fmt.Println("setBuildingToDone")
-
-	var status10 uint8 = 10
-	var status20 uint8 = 20
 
 	stmt := "UPDATE building_queue SET status = status * 10 WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;"
 
