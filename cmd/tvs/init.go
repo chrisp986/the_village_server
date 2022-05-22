@@ -58,14 +58,6 @@ CREATE TABLE IF NOT EXISTS village_resources (
 	UNIQUE(village_id)
   );
 
-
-  CREATE TABLE IF NOT EXISTS resources (
-	resource_id INTEGER PRIMARY KEY,
-	resource TEXT NOT NULL,
-	quality INTEGER NOT NULL
-  );
-
-
 CREATE TABLE IF NOT EXISTS village_setup (
 	village_id INTEGER NOT NULL PRIMARY KEY, 
 	player_id INTEGER NOT NULL,
@@ -86,6 +78,12 @@ CREATE TABLE IF NOT EXISTS building_queue (
 	finish_time TEXT NOT NULL
 	);
   `
+
+//   CREATE TABLE IF NOT EXISTS resources (
+// 	resource_id INTEGER PRIMARY KEY,
+// 	resource TEXT NOT NULL,
+// 	quality INTEGER NOT NULL
+//   );
 
 //   CREATE TABLE IF NOT EXISTS buildings (
 // 	building_id TEXT NOT NULL,
