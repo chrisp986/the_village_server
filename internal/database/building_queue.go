@@ -13,7 +13,9 @@ import (
 )
 
 type BuildingQueueModel struct {
-	DB *sqlx.DB
+	DB        *sqlx.DB
+	Resources []models.Resources
+	Buildings []models.Buildings
 }
 
 const status10 uint8 = 10
@@ -52,11 +54,7 @@ func (m *BuildingQueueModel) Insert(newBuilding models.BuildingQueue) (uint32, e
 // Main function
 func (m *BuildingQueueModel) StartConstructionNewBuilding(buildingQueue models.BuildingQueue) error {
 
-	building, err := m.getBuildingData(buildingQueue.BuildingID)
-	if err != nil {
-		log.Println("Error getting building data: ", err)
-		return err
-	}
+	building := m.getBuildingData(buildingQueue.BuildingID)
 
 	resCheck, err := m.checkIfSufficientResources(buildingQueue, building)
 	if err != nil {
@@ -86,20 +84,20 @@ func (m *BuildingQueueModel) UpdateBuildingQueue() ([]models.BuildingRowAndVilla
 	// check if the finish_time is reached
 	// if reached, get the rowid and village_id to add the building to the village (update the village_setup table)
 
-	rowAndVillage, err := m.getRowAndVillageIDs()
+	rowVillageAmount, err := m.getRowAndVillageIDs()
 	if err != nil {
 		log.Println("Error getting row and village IDs 'UpdateBuildingQueue': ", err)
 		return nil, err
 	}
 
-	return rowAndVillage, err
+	return rowVillageAmount, err
 }
 
 func (m *BuildingQueueModel) getRowAndVillageIDs() ([]models.BuildingRowAndVillage, error) {
 
 	var data []models.BuildingRowAndVillage
 
-	err := m.DB.Select(&data, "SELECT rowid, building_id, village_id FROM building_queue WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;", status10, status20)
+	err := m.DB.Select(&data, "SELECT rowid, building_id, village_id, amount FROM building_queue WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;", status10, status20)
 
 	if err == sql.ErrNoRows {
 		err = nil
@@ -108,7 +106,7 @@ func (m *BuildingQueueModel) getRowAndVillageIDs() ([]models.BuildingRowAndVilla
 	return data, err
 }
 
-func (m *BuildingQueueModel) setBuildingToDone() error {
+func (m *BuildingQueueModel) SetBuildingToDone() error {
 
 	fmt.Println("setBuildingToDone")
 
@@ -136,27 +134,33 @@ func (m *BuildingQueueModel) setBuildingToStart() error {
 	return nil
 }
 
-func (m *BuildingQueueModel) getBuildingData(buildingID string) (models.BuildingSQL, error) {
+func (m *BuildingQueueModel) getBuildingData(buildingID string) models.Buildings {
 
-	var building models.BuildingSQL
+	// var building models.BuildingSQL
 
-	stmt := fmt.Sprintf("SELECT * FROM buildings WHERE building_id='%s';", buildingID)
-
-	err := m.DB.Get(&building, stmt)
-	if err != nil {
-		return building, err
+	for _, b := range m.Buildings {
+		if b.BuildingID == buildingID {
+			return b
+		}
 	}
 
-	return building, err
+	// stmt := fmt.Sprintf("SELECT * FROM buildings WHERE building_id='%s';", buildingID)
+
+	// err := m.DB.Get(&building, stmt)
+	// if err != nil {
+	// 	return building, err
+	// }
+
+	return models.Buildings{}
 }
 
-func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
+func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.BuildingQueue, building models.Buildings) (bool, error) {
 
 	//check if the village has sufficient resources
 
-	bcs := splitCostString(building.BuildCost)
+	// bcs := splitCostString(building.BuildCost)
 
-	for _, bc := range bcs {
+	for _, bc := range building.BuildCost {
 
 		// get the amount of the resource
 		// get the resourceName
@@ -186,7 +190,7 @@ func (m *BuildingQueueModel) checkIfSufficientResources(buildingQueue models.Bui
 	return true, nil
 }
 
-func (m *BuildingQueueModel) insertToBuildingQueue(buildingQueue models.BuildingQueue, building models.BuildingSQL) (bool, error) {
+func (m *BuildingQueueModel) insertToBuildingQueue(buildingQueue models.BuildingQueue, building models.Buildings) (bool, error) {
 
 	//TODO insert to building queue
 	//buildingID, villageID, playerID, amount, status, startTime, finishTime
@@ -249,14 +253,13 @@ func (m *BuildingQueueModel) checkResourceFromVillage(resourceName string, resCo
 
 func (m *BuildingQueueModel) getResourceName(resourceID uint32) (string, error) {
 
-	var resourceName string
-	stmt := fmt.Sprintf("SELECT resource FROM resources WHERE resource_id='%d';", resourceID)
-
-	err := m.DB.Get(&resourceName, stmt)
-	if err != nil {
-		return "", err
+	for _, r := range m.Resources {
+		if r.ResourceID == resourceID {
+			return r.Resource, nil
+		}
 	}
-	return resourceName, nil
+
+	return "", nil
 }
 
 func splitCostString(s string) []models.BuildingCost {

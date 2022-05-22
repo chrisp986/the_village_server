@@ -58,9 +58,3 @@ func TestSplitString(t *testing.T) {
 	}
 
 }
-
-func BenchmarkSplitBuildingsString(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		SplitBuildingsString(oldtestBuildingString)
-	}
-}

@@ -88,6 +88,7 @@ type BuildingRowAndVillage struct {
 	RowID      uint32 `json:"rowid" db:"rowid"`
 	BuildingID string `json:"building_id" db:"building_id"`
 	VillageID  uint32 `json:"village_id" db:"village_id"`
+	Amount     uint32 `json:"amount" db:"amount"`
 }
 
 type BuildingConfig struct {

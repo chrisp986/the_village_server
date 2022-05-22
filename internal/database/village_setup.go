@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/chrisp986/the_village_server/internal/models"
@@ -10,7 +12,8 @@ import (
 )
 
 type VillageSetupModel struct {
-	DB *sqlx.DB
+	DB        *sqlx.DB
+	Buildings []models.Buildings
 }
 
 func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32, error) {
@@ -33,7 +36,7 @@ func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32,
 
 func (m *VillageSetupModel) InsertWithIDCheck(village_id uint32, player_id uint32) (uint32, error) {
 
-	buildingID, err := m.getBuildingsID()
+	buildingID := m.getBuildingsID()
 
 	newVillageSetup := models.VillageSetup{
 		VillageID:  village_id,
@@ -77,20 +80,22 @@ func (m *VillageSetupModel) Update(newVillageSetup models.VillageSetup) (uint32,
 	return uint32(id), nil
 }
 
-func getBuildingsCount(db *sqlx.DB) (int, error) {
+// func getBuildingsCount(db *sqlx.DB) (int, error) {
 
-	var bc int
-	err := db.Get(&bc, "SELECT COUNT(*) FROM buildings;")
+// 	var bc int
+// 	err := db.Get(&bc, "SELECT COUNT(*) FROM buildings;")
 
-	return bc, err
-}
+// 	return bc, err
+// }
 
-func (m *VillageSetupModel) getBuildingsID() ([]string, error) {
+func (m *VillageSetupModel) getBuildingsID() []string {
 
 	var bID []string
-	err := m.DB.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
 
-	return bID, err
+	for _, b := range m.Buildings {
+		bID = append(bID, b.BuildingID)
+	}
+	return bID
 }
 
 func InitBuildingsString(buildingID []string) string {
@@ -137,25 +142,82 @@ func (m *VillageSetupModel) GetBuildingCount(villageID uint32) (string, error) {
 
 	var bString string
 	err := m.DB.Get(&bString, "SELECT buildings FROM village_setup WHERE village_id = ?;", villageID)
+	if err != nil {
+		log.Printf("Error while getting building string: %v ;villageID: %d", err, villageID)
+		return "", err
+	}
 
 	return bString, err
 }
 
-func (m *VillageSetupModel) UpdateBuildingString(bString string, brv models.BuildingRowAndVillage) error {
+func (m *VillageSetupModel) UpdateBuildingString(bString string, brv models.BuildingRowAndVillage) (bool, error) {
 
-	bcs := SplitBuildingsString(bString)
+	bcs := splitString(bString)
 
 	for _, v := range bcs {
 		// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
 		if v.BuildingID == brv.BuildingID {
-			fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+			// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+			newBString := addCountToBuilding(bString, brv.BuildingID, brv.Amount)
+			// fmt.Println("New Building String:", newBString)
+			err := m.updateBuildingStringWithNewAmount(newBString, brv.VillageID)
+			if err != nil {
+				log.Printf("Error while updating building string: %v ;villageID: %d", err, brv.VillageID)
+				return false, err
+			}
 		}
 
 	}
-	return nil
+	return true, nil
 }
 
-func addCountToBuilding() {
+func (m *VillageSetupModel) updateBuildingStringWithNewAmount(bString string, villageID uint32) error {
+
+	stmt := "UPDATE village_setup SET buildings = '?' WHERE village_id = ?;"
+
+	tx := m.DB.MustBegin()
+	_, err := tx.Exec(stmt, bString, villageID)
+	switch err {
+	case nil:
+		tx.Commit()
+		log.Printf("Successfully updated building string for the village: %d", villageID)
+		return err
+	default:
+		log.Printf("Error while updating building string for the village: %d", villageID)
+		tx.Rollback()
+		return err
+	}
+
+}
+
+func addCountToBuilding(buildingString string, buildingID string, count uint32) string {
+
+	s1 := strings.Index(buildingString, buildingID+"=")
+
+	if s1 >= 0 {
+
+		s2 := strings.Index(buildingString[s1+3:], ",")
+
+		if s2 >= 0 {
+
+			sn := buildingString[s1+3:]
+
+			sn1 := sn[:s2]
+
+			b64, err := strconv.ParseUint(sn1, 10, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			newCount := fmt.Sprintf("%d", count+uint32(b64))
+
+			newString := fmt.Sprintf("%s%s%s", buildingString[:s1+3], newCount, sn[s2:])
+
+			return newString
+		}
+	}
+	log.Fatalln("Error in addCountToBuilding")
+	return buildingString
 
 }
 

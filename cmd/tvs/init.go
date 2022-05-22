@@ -58,19 +58,6 @@ CREATE TABLE IF NOT EXISTS village_resources (
 	UNIQUE(village_id)
   );
 
-  CREATE TABLE IF NOT EXISTS buildings (
-	building_id TEXT NOT NULL,
-	name TEXT NOT NULL,
-	quality INTEGER NOT NULL,
-	resource_id INTEGER NOT NULL,
-	production_rate INTEGER NOT NULL,
-	build_cost TEXT NOT NULL,
-	upgrade_cost TEXT NOT NULL,
-	build_time TEXT NOT NULL,
-	upgrade_time TEXT NOT NULL,
-	UNIQUE(building_id)
-  );
-
 
   CREATE TABLE IF NOT EXISTS resources (
 	resource_id INTEGER PRIMARY KEY,
@@ -99,6 +86,19 @@ CREATE TABLE IF NOT EXISTS building_queue (
 	finish_time TEXT NOT NULL
 	);
   `
+
+//   CREATE TABLE IF NOT EXISTS buildings (
+// 	building_id TEXT NOT NULL,
+// 	name TEXT NOT NULL,
+// 	quality INTEGER NOT NULL,
+// 	resource_id INTEGER NOT NULL,
+// 	production_rate INTEGER NOT NULL,
+// 	build_cost TEXT NOT NULL,
+// 	upgrade_cost TEXT NOT NULL,
+// 	build_time TEXT NOT NULL,
+// 	upgrade_time TEXT NOT NULL,
+// 	UNIQUE(building_id)
+//   );
 
 //   CREATE TABLE IF NOT EXISTS prod_buildings_cfg (
 // 	building_id INTEGER PRIMARY KEY,
@@ -234,7 +234,7 @@ func buildingsTable() []models.Buildings {
 	err = json.Unmarshal(bytes, &buildings)
 
 	if err != nil {
-		fmt.Println("JSON decode error!", err)
+		fmt.Println("JSON decode error in 'buildingsTable'", err)
 		return nil
 	}
 	return buildings
@@ -243,10 +243,12 @@ func buildingsTable() []models.Buildings {
 func initVillageTable(db *sqlx.DB) {
 
 	vil := villageTable()
-	bID, err := getBuildingsID(db)
+	// bID, err := getBuildingsID(db)
+	var bID []string
+	buildings := buildingsTable()
 
-	if err != nil {
-		log.Println("Error getting buildings ID", err)
+	for _, b := range buildings {
+		bID = append(bID, b.BuildingID)
 	}
 
 	for _, v := range vil {
@@ -287,13 +289,13 @@ func initVillageTable(db *sqlx.DB) {
 	}
 }
 
-func getBuildingsID(db *sqlx.DB) ([]string, error) {
+// func getBuildingsID(db *sqlx.DB) ([]string, error) {
 
-	var bID []string
-	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
+// 	var bID []string
+// 	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
 
-	return bID, err
-}
+// 	return bID, err
+// }
 
 func resourcesTable() []models.Resources {
 

@@ -11,7 +11,9 @@ import (
 )
 
 type CalcResourcesModel struct {
-	DB *sqlx.DB
+	DB        *sqlx.DB
+	Resources []models.Resources
+	Buildings []models.Buildings
 }
 
 func (a *CalcResourcesModel) CalculateResources() error {
@@ -119,15 +121,14 @@ func (a *CalcResourcesModel) getBuildingString(villageID uint32, playerID uint32
 
 func (a *CalcResourcesModel) getResourceRate(buildingID string) models.Buildings {
 
-	var buidlings models.Buildings
+	for _, b := range a.Buildings {
+		if b.BuildingID == buildingID {
+			return b
+		}
 
-	err := a.DB.Get(&buidlings, "SELECT * FROM buildings WHERE building_id=?;", buildingID)
-	if err != nil {
-		log.Println("Error while getting resource rate: ", err, " BuildingID: ", buildingID)
-		return buidlings
 	}
-
-	return buidlings
+	log.Println("Error while getting resource rate: ", buildingID)
+	return models.Buildings{}
 }
 
 func (a *CalcResourcesModel) getVillageResources(villageID uint32, playerID uint32) models.VillageResource {
@@ -214,16 +215,16 @@ func (a *CalcResourcesModel) GetVillageSetupFromActivePlayers(playerIDs []uint32
 	return nil
 }
 
-func (a *CalcResourcesModel) GetResourceCalcRates() ([]models.Resources, error) {
+// func (a *CalcResourcesModel) GetResourceCalcRates() ([]models.Resources, error) {
 
-	var res []models.Resources
-	err := a.DB.Select(&res, "SELECT * FROM resources;")
-	if err != nil {
-		return res, err
-	}
+// 	var res []models.Resources
+// 	err := a.DB.Select(&res, "SELECT * FROM resources;")
+// 	if err != nil {
+// 		return res, err
+// 	}
 
-	return res, nil
-}
+// 	return res, nil
+// }
 
 func splitString(s string) []models.BuildingCount {
 
@@ -251,59 +252,59 @@ func splitString(s string) []models.BuildingCount {
 	return bcs
 }
 
-func SplitBuildingsString(s string) []models.BuildingCount {
+// func SplitBuildingsString(s string) []models.BuildingCount {
 
-	var bcs []models.BuildingCount
+// 	var bcs []models.BuildingCount
 
-	s1 := strings.Split(s, ",")
+// 	s1 := strings.Split(s, ",")
 
-	for _, v := range s1 {
-		if v != "" {
+// 	for _, v := range s1 {
+// 		if v != "" {
 
-			b := matchB(v)
-			if b == "" {
-				log.Println("Error: Building ID not in range")
-			}
-			c := matchC(v)
-			if c == 4294967295 {
-				log.Println("Error: Count not in range")
-			}
+// 			b := matchB(v)
+// 			if b == "" {
+// 				log.Println("Error: Building ID not in range")
+// 			}
+// 			c := matchC(v)
+// 			if c == 4294967295 {
+// 				log.Println("Error: Count not in range")
+// 			}
 
-			bcs = append(bcs, models.BuildingCount{
-				BuildingID: b,
-				Count:      c,
-			})
-		}
-	}
-	return bcs
-}
+// 			bcs = append(bcs, models.BuildingCount{
+// 				BuildingID: b,
+// 				Count:      c,
+// 			})
+// 		}
+// 	}
+// 	return bcs
+// }
 
-func matchB(s string) string {
+// func matchB(s string) string {
 
-	i := strings.Index(s, "(")
-	if i >= 0 {
-		j := strings.Index(s, ")")
-		if j >= 0 {
-			b := s[i+1 : j]
-			return b
-		}
-	}
-	return ""
-}
+// 	i := strings.Index(s, "(")
+// 	if i >= 0 {
+// 		j := strings.Index(s, ")")
+// 		if j >= 0 {
+// 			b := s[i+1 : j]
+// 			return b
+// 		}
+// 	}
+// 	return ""
+// }
 
-func matchC(s string) uint32 {
+// func matchC(s string) uint32 {
 
-	i := strings.Index(s, "[")
-	if i >= 0 {
-		j := strings.Index(s, "]")
-		if j >= 0 {
-			c := s[i+1 : j]
-			c64, err := strconv.ParseUint(c, 10, 32)
-			if err != nil {
-				log.Fatal(err)
-			}
-			return uint32(c64)
-		}
-	}
-	return 4294967295
-}
+// 	i := strings.Index(s, "[")
+// 	if i >= 0 {
+// 		j := strings.Index(s, "]")
+// 		if j >= 0 {
+// 			c := s[i+1 : j]
+// 			c64, err := strconv.ParseUint(c, 10, 32)
+// 			if err != nil {
+// 				log.Fatal(err)
+// 			}
+// 			return uint32(c64)
+// 		}
+// 	}
+// 	return 4294967295
+// }
