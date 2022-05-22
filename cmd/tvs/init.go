@@ -173,40 +173,40 @@ func initResourceTable(db *sqlx.DB) {
 	}
 }
 
-const insertBuildings string = `INSERT OR IGNORE INTO buildings (building_id, name, quality, resource_id, production_rate, build_cost, upgrade_cost, build_time, upgrade_time) VALUES (:building_id, :name, :quality, :resource_id, :production_rate, :build_cost, :upgrade_cost, :build_time, :upgrade_time);`
+// const insertBuildings string = `INSERT OR IGNORE INTO buildings (building_id, name, quality, resource_id, production_rate, build_cost, upgrade_cost, build_time, upgrade_time) VALUES (:building_id, :name, :quality, :resource_id, :production_rate, :build_cost, :upgrade_cost, :build_time, :upgrade_time);`
 
-func initBuildingsTable(db *sqlx.DB) {
+// func initBuildingsTable(db *sqlx.DB) {
 
-	buildingsJSON := buildingsTable()
+// 	buildingsJSON := buildingsTable()
 
-	// log.Println(buildingsJSON)
+// 	// log.Println(buildingsJSON)
 
-	var buildings []models.BuildingSQL
+// 	var buildings []models.BuildingSQL
 
-	for _, b := range buildingsJSON {
-		buildings = append(buildings, models.BuildingSQL{
-			BuildingID:     b.BuildingID,
-			Name:           b.Name,
-			Quality:        b.Quality,
-			ResourceID:     b.ResourceID,
-			ProductionRate: b.ProductionRate,
-			BuildCost:      costToString(b.BuildCost),
-			UpgradeCost:    costToString(b.UpgradeCost),
-			BuildTime:      b.BuildTime,
-			UpgradeTime:    b.UpgradeTime,
-		})
+// 	for _, b := range buildingsJSON {
+// 		buildings = append(buildings, models.BuildingSQL{
+// 			BuildingID:     b.BuildingID,
+// 			Name:           b.Name,
+// 			Quality:        b.Quality,
+// 			ResourceID:     b.ResourceID,
+// 			ProductionRate: b.ProductionRate,
+// 			BuildCost:      costToString(b.BuildCost),
+// 			UpgradeCost:    costToString(b.UpgradeCost),
+// 			BuildTime:      b.BuildTime,
+// 			UpgradeTime:    b.UpgradeTime,
+// 		})
 
-	}
+// 	}
 
-	for _, b := range buildings {
+// 	for _, b := range buildings {
 
-		_, err := db.NamedExec(insertBuildings, &b)
-		if err != nil {
-			log.Fatalln("Error inserting building: ", err)
-		}
+// 		_, err := db.NamedExec(insertBuildings, &b)
+// 		if err != nil {
+// 			log.Fatalln("Error inserting building: ", err)
+// 		}
 
-	}
-}
+// 	}
+// }
 
 func costToString(bc []models.BuildingCost) string {
 

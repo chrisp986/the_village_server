@@ -62,7 +62,7 @@ func main() {
 
 	initPlayerTable(db)
 	// initResourceTable(db)
-	initBuildingsTable(db)
+	// initBuildingsTable(db)
 	initVillageTable(db)
 
 	resources := resourcesTable()

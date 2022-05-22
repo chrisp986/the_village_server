@@ -108,17 +108,26 @@ func (m *BuildingQueueModel) getRowAndVillageIDs() ([]models.BuildingRowAndVilla
 
 func (m *BuildingQueueModel) SetBuildingToDone() error {
 
-	fmt.Println("setBuildingToDone")
-
 	stmt := "UPDATE building_queue SET status = status * 10 WHERE (status = ? OR status = ?) AND strftime('%s', 'now') >= finish_time;"
 
-	_, err := m.DB.Exec(stmt, status10, status20)
+	result, err := m.DB.Exec(stmt, status10, status20)
 	if err != nil {
 		log.Println("Error setting building to done 'setBuildingToDone': ", err)
 		return err
 	}
 
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Println("Error getting rows affected 'setBuildingToDone': ", err)
+		return err
+	}
+
+	if rowsAffected > 0 {
+		log.Println("Building process completed!")
+		return err
+	}
+	log.Println("Error! No Rows updated!")
+	return err
 }
 
 func (m *BuildingQueueModel) setBuildingToStart() error {
