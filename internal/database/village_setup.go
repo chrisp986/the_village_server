@@ -12,8 +12,8 @@ import (
 )
 
 type VillageSetupModel struct {
-	DB        *sqlx.DB
-	Buildings []models.Buildings
+	DB      *sqlx.DB
+	Workers []models.Workers
 }
 
 func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32, error) {
@@ -41,7 +41,7 @@ func (m *VillageSetupModel) InsertWithIDCheck(village_id uint32, player_id uint3
 	newVillageSetup := models.VillageSetup{
 		VillageID:  village_id,
 		PlayerID:   player_id,
-		Buildings:  InitBuildingsString(buildingID),
+		WorkerID:   InitBuildingsString(buildingID),
 		Status:     0,
 		LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 	}
@@ -80,22 +80,14 @@ func (m *VillageSetupModel) Update(newVillageSetup models.VillageSetup) (uint32,
 	return uint32(id), nil
 }
 
-// func getBuildingsCount(db *sqlx.DB) (int, error) {
-
-// 	var bc int
-// 	err := db.Get(&bc, "SELECT COUNT(*) FROM buildings;")
-
-// 	return bc, err
-// }
-
 func (m *VillageSetupModel) getBuildingsID() []string {
 
-	var bID []string
+	var wID []string
 
-	for _, b := range m.Buildings {
-		bID = append(bID, b.BuildingID)
+	for _, b := range m.Workers {
+		wID = append(wID, b.WorkerID)
 	}
-	return bID
+	return wID
 }
 
 func InitBuildingsString(buildingID []string) string {
@@ -152,22 +144,22 @@ func (m *VillageSetupModel) GetBuildingCount(villageID uint32) (string, error) {
 
 func (m *VillageSetupModel) UpdateBuildingString(bString string, brv models.BuildingRowAndVillage) (bool, error) {
 
-	bcs := splitString(bString)
+	// bcs := splitString(bString)
 
-	for _, v := range bcs {
-		// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
-		if v.BuildingID == brv.BuildingID {
-			// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
-			newBString := addCountToBuilding(bString, brv.BuildingID, brv.Amount)
-			// fmt.Println("New Building String:", newBString)
-			err := m.updateBuildingStringWithNewAmount(newBString, brv.VillageID)
-			if err != nil {
-				log.Printf("Error while updating building string: %v ;villageID: %d", err, brv.VillageID)
-				return false, err
-			}
-		}
+	// for _, v := range bcs {
+	// 	// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+	// 	if v.BuildingID == brv.BuildingID {
+	// 		// fmt.Println("Building:", v.BuildingID, " Count:", v.Count)
+	// 		newBString := addCountToBuilding(bString, brv.BuildingID, brv.Amount)
+	// 		// fmt.Println("New Building String:", newBString)
+	// 		err := m.updateBuildingStringWithNewAmount(newBString, brv.VillageID)
+	// 		if err != nil {
+	// 			log.Printf("Error while updating building string: %v ;villageID: %d", err, brv.VillageID)
+	// 			return false, err
+	// 		}
+	// 	}
 
-	}
+	// }
 	return true, nil
 }
 

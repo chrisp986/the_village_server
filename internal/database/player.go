@@ -1,6 +1,8 @@
 package database
 
 import (
+	"log"
+
 	"github.com/chrisp986/the_village_server/internal/models"
 	"github.com/jmoiron/sqlx"
 )
@@ -48,4 +50,17 @@ func (m *PlayerModel) Get(pID uint32) (*models.Player, error) {
 		return nil, err
 	}
 	return p, err
+}
+
+func (m *PlayerModel) Delete(pID uint32) error {
+
+	stmt := `DELETE FROM players WHERE player_id = ?;`
+
+	_, err := m.DB.Exec(stmt, pID)
+	if err != nil {
+		log.Fatalf("Error deleting player: %v", err)
+		return err
+	}
+	log.Printf("Player deleted: %d", pID)
+	return nil
 }

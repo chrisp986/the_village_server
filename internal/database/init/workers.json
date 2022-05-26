@@ -1,8 +1,8 @@
 [
     {
-        "building_id": "h1",
-        "name": "HunterHut",
-        "quality": 1,
+        "worker_id": "h1",
+        "name": "Hunter_1",
+        "skill_level": 1,
         "resource_id": 0,
         "production_rate": 2,
         "build_cost": [
@@ -21,9 +21,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "h2",
-        "name": "HunterHut",
-        "quality": 2,
+        "worker_id": "h2",
+        "name": "Hunter_2",
+        "skill_level": 2,
         "resource_id": 0,
         "production_rate": 5,
         "build_cost": [
@@ -42,9 +42,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "h3",
-        "name": "HunterHut",
-        "quality": 3,
+        "worker_id": "h3",
+        "name": "Hunter_3",
+        "skill_level": 3,
         "resource_id": 0,
         "production_rate": 13,
         "build_cost": [
@@ -63,9 +63,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "h4",
-        "name": "HunterHut",
-        "quality": 4,
+        "worker_id": "h4",
+        "name": "Hunter_4",
+        "skill_level": 4,
         "resource_id": 0,
         "production_rate": 21,
         "build_cost": [
@@ -84,9 +84,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "h5",
-        "name": "HunterHut",
-        "quality": 5,
+        "worker_id": "h5",
+        "name": "Hunter_5",
+        "skill_level": 5,
         "resource_id": 0,
         "production_rate": 55,
         "build_cost": [
@@ -105,9 +105,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "h6",
-        "name": "HunterHut",
-        "quality": 6,
+        "worker_id": "h6",
+        "name": "Hunter_6",
+        "skill_level": 6,
         "resource_id": 0,
         "production_rate": 144,
         "build_cost": [
@@ -126,9 +126,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w1",
-        "name": "WoodcutterHut",
-        "quality": 1,
+        "worker_id": "l1",
+        "name": "Lumberjack_1",
+        "skill_level": 1,
         "resource_id": 1,
         "production_rate": 2,
         "build_cost": [
@@ -147,9 +147,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w2",
-        "name": "WoodcutterHut",
-        "quality": 2,
+        "worker_id": "l2",
+        "name": "Lumberjack_2",
+        "skill_level": 2,
         "resource_id": 1,
         "production_rate": 5,
         "build_cost": [
@@ -168,9 +168,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w3",
-        "name": "WoodcutterHut",
-        "quality": 3,
+        "worker_id": "l3",
+        "name": "Lumberjack_3",
+        "skill_level": 3,
         "resource_id": 1,
         "production_rate": 13,
         "build_cost": [
@@ -189,9 +189,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w4",
-        "name": "WoodcutterHut",
-        "quality": 4,
+        "worker_id": "l4",
+        "name": "Lumberjack_4",
+        "skill_level": 4,
         "resource_id": 1,
         "production_rate": 21,
         "build_cost": [
@@ -210,9 +210,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w5",
-        "name": "WoodcutterHut",
-        "quality": 5,
+        "worker_id": "l5",
+        "name": "Lumberjack_5",
+        "skill_level": 5,
         "resource_id": 1,
         "production_rate": 55,
         "build_cost": [
@@ -231,9 +231,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "w6",
-        "name": "WoodcutterHut",
-        "quality": 6,
+        "worker_id": "l6",
+        "name": "Lumberjack_6",
+        "skill_level": 6,
         "resource_id": 1,
         "production_rate": 144,
         "build_cost": [
@@ -252,9 +252,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q1",
-        "name": "Quarry",
-        "quality": 1,
+        "worker_id": "m1",
+        "name": "Miner_1",
+        "skill_level": 1,
         "resource_id": 2,
         "production_rate": 2,
         "build_cost": [
@@ -273,9 +273,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q2",
-        "name": "Quarry",
-        "quality": 2,
+        "worker_id": "m2",
+        "name": "Miner_2",
+        "skill_level": 2,
         "resource_id": 2,
         "production_rate": 5,
         "build_cost": [
@@ -294,9 +294,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q3",
-        "name": "Quarry",
-        "quality": 3,
+        "worker_id": "m3",
+        "name": "Miner_3",
+        "skill_level": 3,
         "resource_id": 2,
         "production_rate": 13,
         "build_cost": [
@@ -315,9 +315,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q4",
-        "name": "Quarry",
-        "quality": 4,
+        "worker_id": "m4",
+        "name": "Miner_4",
+        "skill_level": 4,
         "resource_id": 2,
         "production_rate": 21,
         "build_cost": [
@@ -336,9 +336,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q5",
-        "name": "Quarry",
-        "quality": 5,
+        "worker_id": "m5",
+        "name": "Miner_5",
+        "skill_level": 5,
         "resource_id": 2,
         "production_rate": 55,
         "build_cost": [
@@ -357,9 +357,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "q6",
-        "name": "Quarry",
-        "quality": 6,
+        "worker_id": "m6",
+        "name": "Miner_6",
+        "skill_level": 6,
         "resource_id": 2,
         "production_rate": 144,
         "build_cost": [
@@ -378,9 +378,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m1",
-        "name": "Mine",
-        "quality": 1,
+        "worker_id": "b1",
+        "name": "Blacksmith_1",
+        "skill_level": 1,
         "resource_id": 3,
         "production_rate": 2,
         "build_cost": [
@@ -399,9 +399,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m2",
-        "name": "Mine",
-        "quality": 2,
+        "worker_id": "b2",
+        "name": "Blacksmith_2",
+        "skill_level": 2,
         "resource_id": 3,
         "production_rate": 5,
         "build_cost": [
@@ -420,9 +420,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m3",
-        "name": "Mine",
-        "quality": 3,
+        "worker_id": "b3",
+        "name": "Blacksmith_3",
+        "skill_level": 3,
         "resource_id": 3,
         "production_rate": 13,
         "build_cost": [
@@ -441,9 +441,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m4",
-        "name": "Mine",
-        "quality": 4,
+        "worker_id": "b4",
+        "name": "Blacksmith_4",
+        "skill_level": 4,
         "resource_id": 3,
         "production_rate": 21,
         "build_cost": [
@@ -462,9 +462,9 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m5",
-        "name": "Mine",
-        "quality": 5,
+        "worker_id": "b5",
+        "name": "Blacksmith_5",
+        "skill_level": 5,
         "resource_id": 3,
         "production_rate": 55,
         "build_cost": [
@@ -483,136 +483,10 @@
         "upgrade_time": 40
     },
     {
-        "building_id": "m6",
-        "name": "Mine",
-        "quality": 6,
+        "worker_id": "b6",
+        "name": "Blacksmith_6",
+        "skill_level": 6,
         "resource_id": 3,
-        "production_rate": 144,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f1",
-        "name": "Fountain",
-        "quality": 1,
-        "resource_id": 4,
-        "production_rate": 2,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f2",
-        "name": "Fountain",
-        "quality": 2,
-        "resource_id": 4,
-        "production_rate": 5,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f3",
-        "name": "Fountain",
-        "quality": 3,
-        "resource_id": 4,
-        "production_rate": 13,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f4",
-        "name": "Fountain",
-        "quality": 4,
-        "resource_id": 4,
-        "production_rate": 21,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f5",
-        "name": "Fountain",
-        "quality": 5,
-        "resource_id": 4,
-        "production_rate": 55,
-        "build_cost": [
-            {
-                "resource_id": 0,
-                "amount": 10
-            }
-        ],
-        "upgrade_cost": [
-            {
-                "resource_id": 0,
-                "amount": 5
-            }
-        ],
-        "build_time": 60,
-        "upgrade_time": 40
-    },
-    {
-        "building_id": "f6",
-        "name": "Fountain",
-        "quality": 6,
-        "resource_id": 4,
         "production_rate": 144,
         "build_cost": [
             {

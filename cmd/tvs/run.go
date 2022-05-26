@@ -25,6 +25,7 @@ func (a *application) runServer() {
 	// gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	router.Use(gin.Recovery())
+	router.LoadHTMLFiles("internal/web/templates/index.html")
 
 	a.routes(router)
 

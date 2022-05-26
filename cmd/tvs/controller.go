@@ -79,6 +79,7 @@ func (a *application) postPlayer(c *gin.Context) {
 	// Create a new village for the player
 	village_id, err := a.createNewVillage(player_id, newPlayer.PlayerName)
 	if err != nil {
+		a.players.Delete(player_id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "createNewVillage"})
 		return
 	}
@@ -108,7 +109,7 @@ func (a *application) postPlayer(c *gin.Context) {
 	})
 }
 
-func (a *application) postConstructNewBuilding(c *gin.Context) {
+func (a *application) postTrainNewWorker(c *gin.Context) {
 	// this function is used to add a new building to a village
 	// Get the village_id and the player_id as json
 	// Add the new building to the building queue
@@ -123,23 +124,23 @@ func (a *application) postConstructNewBuilding(c *gin.Context) {
 	// "start_time": "2020-01-01 00:00:00",
 	// "finish_time": "2020-01-01 00:00:00"
 
-	var newBuilding models.BuildingQueue
+	var newWorker models.TrainingQueue
 
-	if err := c.BindJSON(&newBuilding); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "postConstructNewBuilding"})
+	if err := c.BindJSON(&newWorker); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "postTrainNewWorker"})
 		return
 	}
 
 	// Status 1 = new building
 	// Status 2 = upgrade building
 
-	switch newBuilding.Status {
+	switch newWorker.Status {
 	case 1:
 
-		err := a.buildingQueue.StartConstructionNewBuilding(newBuilding)
+		err := a.trainingQueue.StartTrainingNewWorker(newWorker)
 		if err != nil {
 			log.Println("Error: ", err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "buildingQueue.StartConstructionNewBuilding"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "function": "trainingQueue.StartTrainingNewWorker"})
 			return
 		}
 		// get needed resources for the new building

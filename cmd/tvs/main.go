@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"time"
@@ -16,6 +15,7 @@ type application struct {
 	players interface {
 		Insert(models.Player) (uint32, error)
 		Get(uint32) (*models.Player, error)
+		Delete(uint32) error
 	}
 	villages interface {
 		Insert(models.Village) (uint32, error)
@@ -32,19 +32,19 @@ type application struct {
 	calcResources interface {
 		CalculateResources() error
 	}
-	buildingQueue interface {
-		Insert(models.BuildingQueue) (uint32, error)
-		StartConstructionNewBuilding(models.BuildingQueue) error
-		UpdateBuildingQueue() ([]models.BuildingRowAndVillage, error)
-		SetBuildingToDone() error
+	trainingQueue interface {
+		Insert(models.TrainingQueue) (uint32, error)
+		StartTrainingNewWorker(models.TrainingQueue) error
+		UpdateTrainingQueue() ([]models.BuildingRowAndVillage, error)
+		SetTrainingToDone() error
 	}
 }
 
 func main() {
 	log.Println("Starting the village server v0.1")
 
-	version := flag.Int("version", 1, "genesis version")
-	flag.Parse()
+	// version := flag.Int("version", 1, "genesis version")
+	// flag.Parse()
 
 	err := initDB()
 	if err != nil {
@@ -58,33 +58,33 @@ func main() {
 	}
 	log.Println("Connected to database")
 
-	genesisTick(db, *version)
+	// genesisTick(db, *version)
 
-	initPlayerTable(db)
 	// initResourceTable(db)
 	// initBuildingsTable(db)
+	initPlayerTable(db)
 	initVillageTable(db)
 
 	resources := resourcesTable()
-	buildings := buildingsTable()
+	workers := workersTable()
 
 	app := &application{
 		players:  &database.PlayerModel{DB: db},
 		villages: &database.VillageModel{DB: db},
 		villageSetup: &database.VillageSetupModel{
-			DB:        db,
-			Buildings: buildings,
+			DB:      db,
+			Workers: workers,
 		},
 		villageResources: &database.VillageResourcesModel{DB: db},
 		calcResources: &database.CalcResourcesModel{
 			DB:        db,
 			Resources: resources,
-			Buildings: buildings,
+			Workers:   workers,
 		},
-		buildingQueue: &database.BuildingQueueModel{
+		trainingQueue: &database.TrainingQueueModel{
 			DB:        db,
 			Resources: resources,
-			Buildings: buildings,
+			Workers:   workers,
 		},
 	}
 
@@ -96,7 +96,7 @@ func main() {
 	}
 
 	if _, err := s.Every(1).Second().Do(func() {
-		rowVillageAmount, err := app.buildingQueue.UpdateBuildingQueue()
+		rowVillageAmount, err := app.trainingQueue.UpdateTrainingQueue()
 		if err != nil {
 			log.Println("Error in the cron job app.buildingQueue.UpdateBuildingQueue", err)
 		}
@@ -114,7 +114,7 @@ func main() {
 				}
 				if updatedString {
 					log.Println("Updated building string")
-					err := app.buildingQueue.SetBuildingToDone()
+					err := app.trainingQueue.SetTrainingToDone()
 					if err != nil {
 						log.Println("Error in the cron job app.buildingQueue.SetBuildingToDone", err)
 					}
@@ -134,11 +134,12 @@ func closeServer(db *sqlx.DB) {
 
 	// Close the database connection
 	db.Close()
-	log.Println("Closing server and delete database")
+	log.Println("Closing server")
 	// e := os.Remove("tv_server.db")
 	// if e != nil {
 	// 	log.Fatal(e)
 	// }
+	// log.Println("Database deleted")
 }
 
 func genesisTick(db *sqlx.DB, status int) {

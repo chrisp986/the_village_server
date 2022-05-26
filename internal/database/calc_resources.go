@@ -3,8 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 
 	"github.com/chrisp986/the_village_server/internal/models"
 	"github.com/jmoiron/sqlx"
@@ -13,7 +11,7 @@ import (
 type CalcResourcesModel struct {
 	DB        *sqlx.DB
 	Resources []models.Resources
-	Buildings []models.Buildings
+	Workers   []models.Workers
 }
 
 func (a *CalcResourcesModel) CalculateResources() error {
@@ -35,51 +33,50 @@ func (a *CalcResourcesModel) CalculateResources() error {
 
 	}
 
-	for _, pID := range playerIDs {
-		villages := a.getVillagesFromActivePlayer(pID)
+	// for _, pID := range playerIDs {
+	// 	villages := a.getVillagesFromActivePlayer(pID)
 
-		for _, v := range villages {
+	// for _, v := range villages {
 
-			buildingString := a.getBuildingString(v.VillageID, v.PlayerID)
-			bcs := splitString(buildingString)
+	// buildingString := a.getBuildingString(v.VillageID, v.PlayerID)
+	// bcs := splitString(buildingString)
 
-			for _, b := range bcs {
-				if b.Count > 0 {
+	// for _, b := range bcs {
+	// 	if b.Count > 0 {
 
-					buildings := a.getResourceRate(b.BuildingID)
-					// log.Println("Rate: ", buildings.ProductionRate)
-					// resources := a.getVillageResources(v.VillageID, v.PlayerID)
-					// log.Println("Resource Food: ", resources.Food)
-					oldResCount, att := a.getOldResourceCount(buildings.ResourceID, v.VillageID, v.PlayerID)
+	// 		buildings := a.getResourceRate(b.BuildingID)
+	// 		// log.Println("Rate: ", buildings.ProductionRate)
+	// 		// resources := a.getVillageResources(v.VillageID, v.PlayerID)
+	// 		// log.Println("Resource Food: ", resources.Food)
+	// 		oldResCount, att := a.getOldResourceCount(buildings.ResourceID, v.VillageID, v.PlayerID)
 
-					newResCount := oldResCount + (buildings.ProductionRate * b.Count)
+	// 		newResCount := oldResCount + (buildings.ProductionRate * b.Count)
 
-					log.Println("VillageID: ", v.VillageID, " PlayerID: ", v.PlayerID, " BuildingID: ", b.BuildingID, " Amount of buildings: ", b.Count, " Product: ", att, " Rate: ", buildings.ProductionRate, " Old Resource Count: ", oldResCount, " New Resource Count: ", newResCount)
+	// 		log.Println("VillageID: ", v.VillageID, " PlayerID: ", v.PlayerID, " BuildingID: ", b.BuildingID, " Amount of buildings: ", b.Count, " Product: ", att, " Rate: ", buildings.ProductionRate, " Old Resource Count: ", oldResCount, " New Resource Count: ", newResCount)
 
-					// Update village_resources
-					err := a.updateVillageResources(v.VillageID, v.PlayerID, att, newResCount)
-					if err != nil {
-						log.Println("Error: ", err)
-					}
-				}
-			}
-		}
-	}
-
-	// resource, err := a.GetResourceCalcRates()
-	// if err != nil {
-	// 	log.Println("Error while getting resource calc rates: ", err)
-	// 	return err
-	// }
-
-	// err = a.GetVillageSetupFromActivePlayers(playerIDs, resource)
-	// if err != nil {
-	// 	log.Println("Error while getting village setup from active players: ", err)
-	// 	return err
-	// }
-
+	// 		// Update village_resources
+	// 		err := a.updateVillageResources(v.VillageID, v.PlayerID, att, newResCount)
+	// 		if err != nil {
+	// 			log.Println("Error: ", err)
+	// 		}
+	// 	}
 	return nil
 }
+
+// resource, err := a.GetResourceCalcRates()
+// if err != nil {
+// 	log.Println("Error while getting resource calc rates: ", err)
+// 	return err
+// }
+
+// err = a.GetVillageSetupFromActivePlayers(playerIDs, resource)
+// if err != nil {
+// 	log.Println("Error while getting village setup from active players: ", err)
+// 	return err
+// }
+
+// 	return nil
+// }
 
 func (a *CalcResourcesModel) getActivePlayers() []uint32 {
 
@@ -119,16 +116,16 @@ func (a *CalcResourcesModel) getBuildingString(villageID uint32, playerID uint32
 	return buildings
 }
 
-func (a *CalcResourcesModel) getResourceRate(buildingID string) models.Buildings {
+func (a *CalcResourcesModel) getResourceRate(workerID string) models.Workers {
 
-	for _, b := range a.Buildings {
-		if b.BuildingID == buildingID {
-			return b
+	for _, w := range a.Workers {
+		if w.WorkerID == workerID {
+			return w
 		}
 
 	}
-	log.Println("Error while getting resource rate: ", buildingID)
-	return models.Buildings{}
+	log.Println("Error while getting resource rate: ", workerID)
+	return models.Workers{}
 }
 
 func (a *CalcResourcesModel) getVillageResources(villageID uint32, playerID uint32) models.VillageResource {
@@ -226,31 +223,31 @@ func (a *CalcResourcesModel) GetVillageSetupFromActivePlayers(playerIDs []uint32
 // 	return res, nil
 // }
 
-func splitString(s string) []models.BuildingCount {
+// func splitString(s string) []models.BuildingCount {
 
-	var bcs []models.BuildingCount
+// 	var bcs []models.BuildingCount
 
-	s1 := strings.Split(s, ",")
+// 	s1 := strings.Split(s, ",")
 
-	for _, v := range s1[:len(s1)-1] {
-		s2 := strings.Split(v, "=")
-		b := s2[0]
-		c := s2[1]
+// 	for _, v := range s1[:len(s1)-1] {
+// 		s2 := strings.Split(v, "=")
+// 		b := s2[0]
+// 		c := s2[1]
 
-		c64, err := strconv.ParseUint(c, 10, 32)
-		if err != nil {
-			log.Println(err)
-		}
+// 		c64, err := strconv.ParseUint(c, 10, 32)
+// 		if err != nil {
+// 			log.Println(err)
+// 		}
 
-		bcs = append(bcs, models.BuildingCount{
-			BuildingID: b,
-			Count:      uint32(c64),
-		})
+// 		bcs = append(bcs, models.BuildingCount{
+// 			WorkerID: b,
+// 			Count:    uint32(c64),
+// 		})
 
-	}
+// 	}
 
-	return bcs
-}
+// 	return bcs
+// }
 
 // func SplitBuildingsString(s string) []models.BuildingCount {
 

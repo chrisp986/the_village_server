@@ -50,49 +50,47 @@ type ResourceRates struct {
 	Rate       uint32 `json:"rate" db:"rate"`
 }
 
-type Buildings struct {
-	BuildingID     string         `json:"building_id" db:"building_id"`
+type Workers struct {
+	WorkerID       string         `json:"worker_id" db:"worker_id"`
 	Name           string         `json:"name" db:"name"`
-	Quality        uint32         `json:"quality" db:"quality"`
+	SkillLevel     uint32         `json:"skill_level" db:"worker_id"`
 	ResourceID     uint32         `json:"resource_id" db:"resource_id"`
 	ProductionRate uint32         `json:"production_rate" db:"production_rate"`
-	BuildCost      []BuildingCost `json:"build_cost" db:"build_cost"`
-	UpgradeCost    []BuildingCost `json:"upgrade_cost" db:"upgrade_cost"`
-	BuildTime      uint32         `json:"build_time" db:"build_time"`
-	UpgradeTime    uint32         `json:"upgrade_time" db:"upgrade_time"`
+	TrainingCost   []TrainingCost `json:"training_cost" db:"training_cost"`
+	TrainingTime   uint32         `json:"training_time" db:"training_time"`
 }
 
-type BuildingCost struct {
+type TrainingCost struct {
 	ResourceID uint32 `json:"resource_id" db:"resource_id"`
 	Amount     uint32 `json:"amount" db:"amount"`
 }
 
-type BuildingSQL struct {
-	BuildingID     string `json:"building_id" db:"building_id"`
-	Name           string `json:"name" db:"name"`
-	Quality        uint32 `json:"quality" db:"quality"`
-	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
-	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
-	BuildCost      string `json:"build_cost" db:"build_cost"`
-	UpgradeCost    string `json:"upgrade_cost" db:"upgrade_cost"`
-	BuildTime      uint32 `json:"build_time" db:"build_time"`
-	UpgradeTime    uint32 `json:"upgrade_time" db:"upgrade_time"`
-}
+// type WorkersQL struct {
+// 	BuildingID     string `json:"building_id" db:"building_id"`
+// 	Name           string `json:"name" db:"name"`
+// 	Quality        uint32 `json:"quality" db:"quality"`
+// 	ResourceID     uint32 `json:"resource_id" db:"resource_id"`
+// 	ProductionRate uint32 `json:"production_rate" db:"production_rate"`
+// 	BuildCost      string `json:"build_cost" db:"build_cost"`
+// 	UpgradeCost    string `json:"upgrade_cost" db:"upgrade_cost"`
+// 	BuildTime      uint32 `json:"build_time" db:"build_time"`
+// 	UpgradeTime    uint32 `json:"upgrade_time" db:"upgrade_time"`
+// }
 
 type BuildingCount struct {
-	BuildingID string `json:"building_id" db:"building_id"`
-	Count      uint32 `json:"count" db:"count"`
+	WorkerID string `json:"worker_id" db:"worker_id"`
+	Count    uint32 `json:"count" db:"count"`
 }
 
 type BuildingRowAndVillage struct {
-	RowID      uint32 `json:"rowid" db:"rowid"`
-	BuildingID string `json:"building_id" db:"building_id"`
-	VillageID  uint32 `json:"village_id" db:"village_id"`
-	Amount     uint32 `json:"amount" db:"amount"`
+	RowID     uint32 `json:"rowid" db:"rowid"`
+	WorkerID  string `json:"worker_id" db:"worker_id"`
+	VillageID uint32 `json:"village_id" db:"village_id"`
+	Amount    uint32 `json:"amount" db:"amount"`
 }
 
 type BuildingConfig struct {
-	BuildingID    uint32 `json:"building_id" db:"building_id"`
+	WorkerID      uint32 `json:"worker_id" db:"worker_id"`
 	Resource      string `json:"resource" db:"resource"`
 	Quality       uint32 `json:"quality" db:"quality"`
 	ResRate       uint32 `json:"res_rate" db:"res_rate"`
@@ -135,22 +133,22 @@ type Village struct {
 type VillageSetup struct {
 	VillageID  uint32 `json:"village_id" db:"village_id"`
 	PlayerID   uint32 `json:"player_id" db:"player_id"`
-	Buildings  string `json:"buildings" db:"buildings"`
+	WorkerID   string `json:"worker_id" db:"worker_id"`
 	Status     uint32 `json:"status" db:"status"`
 	LastUpdate string `json:"last_update" db:"last_update"`
 }
 
-type BuildingQueue struct {
+type TrainingQueue struct {
 	VillageID  uint32 `json:"village_id" db:"village_id"`
 	PlayerID   uint32 `json:"player_id" db:"player_id"`
-	BuildingID string `json:"building_id" db:"building_id"`
+	WorkerID   string `json:"worker_id" db:"worker_id"`
 	Amount     uint32 `json:"amount" db:"amount"`
 	Status     uint8  `json:"status" db:"status"`
 	StartTime  uint32 `json:"start_time" db:"start_time"`
 	FinishTime uint32 `json:"finish_time" db:"finish_time"`
 }
 
-// CREATE TABLE IF NOT EXISTS prod_buildings_cfg (
+// CREATE TABLE IF NOT EXISTS prod_Workers_cfg (
 // 	building_id INTEGER PRIMARY KEY,
 // 	resource TEXT NOT NULL,
 // 	quality INTEGER NOT NULL,

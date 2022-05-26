@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +16,15 @@ func (a *application) routes(r *gin.Engine) {
 
 		//1. create new player and then create a new village that belongs to the player
 		v1.POST("/new_player", a.postPlayer)
-		v1.POST("/build", a.postConstructNewBuilding)
+		v1.POST("/build", a.postTrainNewWorker)
 
+	}
+	web := r.Group("/")
+	{
+		web.GET("/", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "index.html", gin.H{
+				"title": "Main TV website",
+			})
+		})
 	}
 }

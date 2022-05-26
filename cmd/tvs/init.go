@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/chrisp986/the_village_server/internal/database"
 	"github.com/chrisp986/the_village_server/internal/models"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -58,18 +57,8 @@ CREATE TABLE IF NOT EXISTS village_resources (
 	UNIQUE(village_id)
   );
 
-CREATE TABLE IF NOT EXISTS village_setup (
-	village_id INTEGER NOT NULL PRIMARY KEY, 
-	player_id INTEGER NOT NULL,
-	buildings TEXT NOT NULL,
-	status INTEGER NOT NULL,
-	last_update TEXT NOT NULL,
-	UNIQUE(village_id)
-	);
-
-
-CREATE TABLE IF NOT EXISTS building_queue (
-	building_id TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS training_queue (
+	worker_id TEXT NOT NULL,
 	village_id INTEGER NOT NULL,
 	player_id INTEGER NOT NULL,
 	amount INTEGER NOT NULL,
@@ -77,7 +66,19 @@ CREATE TABLE IF NOT EXISTS building_queue (
 	start_time TEXT NOT NULL,
 	finish_time TEXT NOT NULL
 	);
+
+	CREATE TABLE IF NOT EXISTS village_setup (village_id INTEGER PRIMARY KEY, player_id INTEGER NOT NULL,'h1' INTEGER NOT NULL,'h2' INTEGER NOT NULL,'h3' INTEGER NOT NULL,'h4' INTEGER NOT NULL,'h5' INTEGER NOT NULL,'h6' INTEGER NOT NULL,'l1' INTEGER NOT NULL,'l2' INTEGER NOT NULL,'l3' INTEGER NOT NULL,'l4' INTEGER NOT NULL,'l5' INTEGER NOT NULL,'l6' INTEGER NOT NULL,'m1' INTEGER NOT NULL,'m2' INTEGER NOT NULL,'m3' INTEGER NOT NULL,'m4' INTEGER NOT NULL,'m5' INTEGER NOT NULL,'m6' INTEGER NOT NULL,'b1' INTEGER NOT NULL,'b2' INTEGER NOT NULL,'b3' INTEGER NOT NULL,'b4' INTEGER NOT NULL,'b5' INTEGER NOT NULL,'b6' INTEGER NOT NULL, status INTEGER NOT NULL, last_update TEXT NOT NULL);
+
   `
+
+//   CREATE TABLE IF NOT EXISTS village_setup (
+// 	village_id INTEGER NOT NULL PRIMARY KEY,
+// 	player_id INTEGER NOT NULL,
+// 	Workers TEXT NOT NULL,
+// 	status INTEGER NOT NULL,
+// 	last_update TEXT NOT NULL,
+// 	UNIQUE(village_id)
+// 	);
 
 //   CREATE TABLE IF NOT EXISTS resources (
 // 	resource_id INTEGER PRIMARY KEY,
@@ -85,7 +86,7 @@ CREATE TABLE IF NOT EXISTS building_queue (
 // 	quality INTEGER NOT NULL
 //   );
 
-//   CREATE TABLE IF NOT EXISTS buildings (
+//   CREATE TABLE IF NOT EXISTS Workers (
 // 	building_id TEXT NOT NULL,
 // 	name TEXT NOT NULL,
 // 	quality INTEGER NOT NULL,
@@ -98,7 +99,7 @@ CREATE TABLE IF NOT EXISTS building_queue (
 // 	UNIQUE(building_id)
 //   );
 
-//   CREATE TABLE IF NOT EXISTS prod_buildings_cfg (
+//   CREATE TABLE IF NOT EXISTS prod_Workers_cfg (
 // 	building_id INTEGER PRIMARY KEY,
 // 	resource TEXT NOT NULL,
 // 	quality INTEGER NOT NULL,
@@ -121,17 +122,15 @@ CREATE TABLE IF NOT EXISTS building_queue (
 // 	rate INTEGER NOT NULL
 //   );
 
-const insertVillageSetup string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
+const insertVillageSetup string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, worker_id, status, last_update) VALUES (:village_id, :player_id, :Workers, :status, :last_update)`
 
 const insertResourceRates string = `INSERT OR IGNORE INTO resource_rates (resource, quality, rate) VALUES (:resource, :quality, :rate)`
 
 const insertVillages string = `INSERT OR IGNORE INTO villages (village_id, player_id, village_name, village_size, village_status, village_loc_y, village_loc_x) VALUES (:village_id, :player_id, :village_name, :village_size, :village_status, :village_loc_y, :village_loc_x)`
 
-const insertVillageSetupInit string = `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
-
 const insertVillageResourcesInit string = `INSERT OR IGNORE INTO village_resources (village_id, player_id, food, wood, stone, metal, water, gold) VALUES (:village_id, :player_id, :food, :wood, :stone, :metal, :water, :gold);`
 
-// const insert string = `INSERT INTO prod_buildings_cfg (building_id,	resource, quality, res_rate,
+// const insert string = `INSERT INTO prod_Workers_cfg (building_id,	resource, quality, res_rate,
 // 	res_1,cost_res_1,res_2, cost_res_2, res_3, cost_res_3, res_4, cost_res_4, res_5, cost_res_5) VALUES (:building_id, :resource, :quality, :res_rate, :res_1, :cost_res_1, :res_2, :cost_res_2, :res_3, :cost_res_3, :res_4, :cost_res_4, :res_5, :cost_res_5);`
 
 func initDB() error {
@@ -155,7 +154,7 @@ func connectDB() (*sqlx.DB, error) {
 
 	db.SetMaxOpenConns(1)
 
-	return db, nil
+	return db, err
 }
 
 const insertResources string = `INSERT OR IGNORE INTO resources (resource_id, resource, quality) VALUES (:resource_id, :resource, :quality)`
@@ -173,18 +172,103 @@ func initResourceTable(db *sqlx.DB) {
 	}
 }
 
-// const insertBuildings string = `INSERT OR IGNORE INTO buildings (building_id, name, quality, resource_id, production_rate, build_cost, upgrade_cost, build_time, upgrade_time) VALUES (:building_id, :name, :quality, :resource_id, :production_rate, :build_cost, :upgrade_cost, :build_time, :upgrade_time);`
+// func initVillageSetupTable(db *sqlx.DB, village models.Village, Workers []models.Wo) {
+// 	//TODO
 
-// func initBuildingsTable(db *sqlx.DB) {
+// 	insertVillageSetupInit := fmt.Sprintf("INSERT OR IGNORE INTO village_setup (village_id, player_id, Workers, status, last_update) VALUES (:village_id, :player_id, :Workers, :status, :last_update);")
 
-// 	buildingsJSON := buildingsTable()
+// 	vs := models.VillageSetup{
+// 		VillageID:  village.VillageID,
+// 		PlayerID:   village.PlayerID,
+// 		Workers:  database.InitWorkersString(buildingIDs),
+// 		Status:     0,
+// 		LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
+// 	}
 
-// 	// log.Println(buildingsJSON)
+// 	_, err := db.NamedExec(insertVillageSetupInit, &vs)
+// 	if err != nil {
+// 		log.Fatalf("Error inserting village setup: %v, VillageID: %d, PlayerID: %d", err, village.VillageID, village.PlayerID)
+// 	}
+// }
 
-// 	var buildings []models.BuildingSQL
+func createVillageSetupTable(db *sqlx.DB, workers []models.Workers) error {
 
-// 	for _, b := range buildingsJSON {
-// 		buildings = append(buildings, models.BuildingSQL{
+	var new string
+
+	for _, w := range workers {
+		new += fmt.Sprintf("'%s' INTEGER NOT NULL,", w.WorkerID)
+	}
+
+	villageSetupTable := "CREATE TABLE IF NOT EXISTS village_setup (village_id INTEGER PRIMARY KEY, player_id INTEGER NOT NULL," + new + " status INTEGER NOT NULL, last_update TEXT NOT NULL);"
+
+	fmt.Println(villageSetupTable)
+
+	if _, err := db.Exec(villageSetupTable); err != nil {
+		log.Println("Error creating village setup table: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func initVillageResourcesTable(db *sqlx.DB, village models.Village) {
+
+	vr := models.VillageResource{
+		VillageID: village.VillageID,
+		PlayerID:  village.PlayerID,
+		Food:      100,
+		Wood:      100,
+		Stone:     100,
+		Metal:     100,
+		Water:     100,
+		Gold:      20,
+	}
+
+	_, err := db.NamedExec(insertVillageResourcesInit, &vr)
+	if err != nil {
+		log.Fatalf("Error inserting village resources: %v, VillageID: %d, PlayerID: %d", err, village.VillageID, village.PlayerID)
+	}
+}
+
+func initVillageTable(db *sqlx.DB) {
+
+	vil := villageTable()
+
+	// bID, err := getWorkersID(db)
+	var wID []string
+	workers := workersTable()
+
+	for _, w := range workers {
+		wID = append(wID, w.WorkerID)
+	}
+
+	for _, v := range vil {
+
+		_, err := db.NamedExec(insertVillages, &v)
+		if err != nil {
+			log.Fatalln("Error inserting village: ", err)
+		}
+
+		// initVillageSetupTable(db, v, Workers)
+		// initVillageSetupTable(db, v, bID)
+
+		initVillageResourcesTable(db, v)
+
+	}
+}
+
+// const insertWorkers string = `INSERT OR IGNORE INTO Workers (building_id, name, quality, resource_id, production_rate, build_cost, upgrade_cost, build_time, upgrade_time) VALUES (:building_id, :name, :quality, :resource_id, :production_rate, :build_cost, :upgrade_cost, :build_time, :upgrade_time);`
+
+// func initWorkersTable(db *sqlx.DB) {
+
+// 	WorkersJSON := WoTable()
+
+// 	// log.Println(WorkersJSON)
+
+// 	var Workers []models.WoQL
+
+// 	for _, b := range WorkersJSON {
+// 		Workers = append(Workers, models.WorkersQL{
 // 			BuildingID:     b.BuildingID,
 // 			Name:           b.Name,
 // 			Quality:        b.Quality,
@@ -198,9 +282,9 @@ func initResourceTable(db *sqlx.DB) {
 
 // 	}
 
-// 	for _, b := range buildings {
+// 	for _, b := range Workers {
 
-// 		_, err := db.NamedExec(insertBuildings, &b)
+// 		_, err := db.NamedExec(insertWorkers, &b)
 // 		if err != nil {
 // 			log.Fatalln("Error inserting building: ", err)
 // 		}
@@ -208,19 +292,19 @@ func initResourceTable(db *sqlx.DB) {
 // 	}
 // }
 
-func costToString(bc []models.BuildingCost) string {
+func costToString(tc []models.TrainingCost) string {
 
 	var cost string
-	for _, v := range bc {
+	for _, v := range tc {
 		cost += fmt.Sprintf("(%d)[%d],", v.ResourceID, v.Amount)
 	}
 
 	return cost
 }
 
-func buildingsTable() []models.Buildings {
+func workersTable() []models.Workers {
 
-	file := filepath.FromSlash("./internal/database/init/buildings.json")
+	file := filepath.FromSlash("./internal/database/init/workers.json")
 	bytes, err := ioutil.ReadFile(file)
 
 	if err != nil {
@@ -228,69 +312,20 @@ func buildingsTable() []models.Buildings {
 		return nil
 	}
 
-	var buildings []models.Buildings
-	err = json.Unmarshal(bytes, &buildings)
+	var workers []models.Workers
+	err = json.Unmarshal(bytes, &workers)
 
 	if err != nil {
-		fmt.Println("JSON decode error in 'buildingsTable'", err)
+		fmt.Println("JSON decode error in 'WorkersTable'", err)
 		return nil
 	}
-	return buildings
+	return workers
 }
 
-func initVillageTable(db *sqlx.DB) {
-
-	vil := villageTable()
-	// bID, err := getBuildingsID(db)
-	var bID []string
-	buildings := buildingsTable()
-
-	for _, b := range buildings {
-		bID = append(bID, b.BuildingID)
-	}
-
-	for _, v := range vil {
-		_, err := db.NamedExec(insertVillages, &v)
-		if err != nil {
-			log.Fatalln("Error inserting village: ", err)
-		}
-
-		vs := models.VillageSetup{
-			VillageID:  v.VillageID,
-			PlayerID:   v.PlayerID,
-			Buildings:  database.InitBuildingsString(bID),
-			Status:     0,
-			LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
-		}
-
-		_, err = db.NamedExec(insertVillageSetupInit, &vs)
-		if err != nil {
-			log.Fatalln("Error inserting village setup", err)
-		}
-
-		vr := models.VillageResource{
-			VillageID: v.VillageID,
-			PlayerID:  v.PlayerID,
-			Food:      100,
-			Wood:      100,
-			Stone:     100,
-			Metal:     100,
-			Water:     100,
-			Gold:      20,
-		}
-
-		_, err = db.NamedExec(insertVillageResourcesInit, &vr)
-		if err != nil {
-			log.Fatalln("Error inserting village setup", err)
-		}
-
-	}
-}
-
-// func getBuildingsID(db *sqlx.DB) ([]string, error) {
+// func getWorkersID(db *sqlx.DB) ([]string, error) {
 
 // 	var bID []string
-// 	err := db.Select(&bID, "SELECT building_id FROM buildings ORDER BY rowid;")
+// 	err := db.Select(&bID, "SELECT building_id FROM Workers ORDER BY rowid;")
 
 // 	return bID, err
 // }
