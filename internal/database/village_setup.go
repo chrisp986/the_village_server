@@ -18,7 +18,9 @@ type VillageSetupModel struct {
 
 func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32, error) {
 
-	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
+	// stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
+
+	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id ,h1 ,h2 ,h3 ,h4 ,h5 ,h6 ,l1 ,l2 ,l3 ,l4 ,l5 ,l6 ,m1 ,m2 ,m3 ,m4 ,m5 ,m6 ,b1 ,b2 ,b3 ,b4 ,b5 ,b6 , status , last_update) VALUES (:village_id, :player_id ,:h1 ,:h2 ,:h3 ,:h4 ,:h5 ,:h6 ,:l1 ,:l2 ,:l3 ,:l4 ,:l5 ,:l6 ,:m1 ,:m2 ,:m3 ,:m4 ,:m5 ,:m6 ,:b1 ,:b2 ,:b3 ,:b4 ,:b5 ,:b6 ,:status ,:last_update);`
 
 	result, err := m.DB.NamedExec(stmt, &newVillageSetup)
 	if err != nil {
@@ -36,17 +38,40 @@ func (m *VillageSetupModel) Insert(newVillageSetup models.VillageSetup) (uint32,
 
 func (m *VillageSetupModel) InsertWithIDCheck(village_id uint32, player_id uint32) (uint32, error) {
 
-	buildingID := m.getBuildingsID()
+	// buildingID := m.getBuildingsID()
 
 	newVillageSetup := models.VillageSetup{
 		VillageID:  village_id,
 		PlayerID:   player_id,
-		WorkerID:   InitBuildingsString(buildingID),
+		H1:         0,
+		H2:         0,
+		H3:         0,
+		H4:         0,
+		H5:         0,
+		H6:         0,
+		L1:         0,
+		L2:         0,
+		L3:         0,
+		L4:         0,
+		L5:         0,
+		L6:         0,
+		M1:         0,
+		M2:         0,
+		M3:         0,
+		M4:         0,
+		M5:         0,
+		M6:         0,
+		B1:         0,
+		B2:         0,
+		B3:         0,
+		B4:         0,
+		B5:         0,
+		B6:         0,
 		Status:     0,
 		LastUpdate: time.Now().Local().Format("2006-01-02 15:04:05"),
 	}
 
-	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
+	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id ,h1 ,h2 ,h3 ,h4 ,h5 ,h6 ,l1 ,l2 ,l3 ,l4 ,l5 ,l6 ,m1 ,m2 ,m3 ,m4 ,m5 ,m6 ,b1 ,b2 ,b3 ,b4 ,b5 ,b6 , status , last_update) VALUES (:village_id, :player_id ,:h1 ,:h2 ,:h3 ,:h4 ,:h5 ,:h6 ,:l1 ,:l2 ,:l3 ,:l4 ,:l5 ,:l6 ,:m1 ,:m2 ,:m3 ,:m4 ,:m5 ,:m6 ,:b1 ,:b2 ,:b3 ,:b4 ,:b5 ,:b6 ,:status ,:last_update);`
 
 	result, err := m.DB.NamedExec(stmt, &newVillageSetup)
 	if err != nil {
@@ -64,7 +89,7 @@ func (m *VillageSetupModel) InsertWithIDCheck(village_id uint32, player_id uint3
 
 func (m *VillageSetupModel) Update(newVillageSetup models.VillageSetup) (uint32, error) {
 
-	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id, buildings, status, last_update) VALUES (:village_id, :player_id, :buildings, :status, :last_update)`
+	stmt := `INSERT OR IGNORE INTO village_setup (village_id, player_id ,h1 ,h2 ,h3 ,h4 ,h5 ,h6 ,l1 ,l2 ,l3 ,l4 ,l5 ,l6 ,m1 ,m2 ,m3 ,m4 ,m5 ,m6 ,b1 ,b2 ,b3 ,b4 ,b5 ,b6 , status , last_update) VALUES (:village_id, :player_id ,:h1 ,:h2 ,:h3 ,:h4 ,:h5 ,:h6 ,:l1 ,:l2 ,:l3 ,:l4 ,:l5 ,:l6 ,:m1 ,:m2 ,:m3 ,:m4 ,:m5 ,:m6 ,:b1 ,:b2 ,:b3 ,:b4 ,:b5 ,:b6 ,:status ,:last_update);`
 
 	result, err := m.DB.NamedExec(stmt, &newVillageSetup)
 	if err != nil {
@@ -165,7 +190,7 @@ func (m *VillageSetupModel) UpdateBuildingString(bString string, brv models.Buil
 
 func (m *VillageSetupModel) updateBuildingStringWithNewAmount(bString string, villageID uint32) error {
 
-	stmt := "UPDATE village_setup SET buildings = '?' WHERE village_id = ?;"
+	stmt := "UPDATE village_setup SET buildings = ? WHERE village_id = ?;"
 
 	tx := m.DB.MustBegin()
 	_, err := tx.Exec(stmt, bString, villageID)

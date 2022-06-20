@@ -130,10 +130,41 @@ type Village struct {
 // 	CopperMine    int64 `json:"copper_mine" db:"copper_mine"`
 // 	Fountain      int64 `json:"fountain" db:"fountain"`
 
+// type VillageSetup struct {
+// 	VillageID  uint32 `json:"village_id" db:"village_id"`
+// 	PlayerID   uint32 `json:"player_id" db:"player_id"`
+// 	WorkerID   string `json:"worker_id" db:"worker_id"`
+// 	Status     uint32 `json:"status" db:"status"`
+// 	LastUpdate string `json:"last_update" db:"last_update"`
+// }
+
 type VillageSetup struct {
 	VillageID  uint32 `json:"village_id" db:"village_id"`
 	PlayerID   uint32 `json:"player_id" db:"player_id"`
-	WorkerID   string `json:"worker_id" db:"worker_id"`
+	H1         uint32 `json:"h1" db:"h1"`
+	H2         uint32 `json:"h2" db:"h2"`
+	H3         uint32 `json:"h3" db:"h3"`
+	H4         uint32 `json:"h4" db:"h4"`
+	H5         uint32 `json:"h5" db:"h5"`
+	H6         uint32 `json:"h6" db:"h6"`
+	L1         uint32 `json:"l1" db:"l1"`
+	L2         uint32 `json:"l2" db:"l2"`
+	L3         uint32 `json:"l3" db:"l3"`
+	L4         uint32 `json:"l4" db:"l4"`
+	L5         uint32 `json:"l5" db:"l5"`
+	L6         uint32 `json:"l6" db:"l6"`
+	M1         uint32 `json:"m1" db:"m1"`
+	M2         uint32 `json:"m2" db:"m2"`
+	M3         uint32 `json:"m3" db:"m3"`
+	M4         uint32 `json:"m4" db:"m4"`
+	M5         uint32 `json:"m5" db:"m5"`
+	M6         uint32 `json:"m6" db:"m6"`
+	B1         uint32 `json:"b1" db:"b1"`
+	B2         uint32 `json:"b2" db:"b2"`
+	B3         uint32 `json:"b3" db:"b3"`
+	B4         uint32 `json:"b4" db:"b4"`
+	B5         uint32 `json:"b5" db:"b5"`
+	B6         uint32 `json:"b6" db:"b6"`
 	Status     uint32 `json:"status" db:"status"`
 	LastUpdate string `json:"last_update" db:"last_update"`
 }
